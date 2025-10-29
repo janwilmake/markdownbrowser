@@ -68,5 +68,6 @@ PAGE
 EXTRA
 
 - shortcuts for closing a tab, opening a tab, refresh ~(both ctrl as well as cmd with w,t,n,r respectively)
+- if location queryparam `?open={url}` was found, open a new tab with that value
 
 Give me a cloudflare worker that has the fetch endpoint and a static file index.html with this functionality. NB: do not include html content in the worker, it can separately be served using public folder (also no env.ASSETS needed)
