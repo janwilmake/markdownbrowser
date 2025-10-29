@@ -8,7 +8,7 @@ Create a markdown browser for me as a cloudflare worker and a Static HTML file i
 
 BOUNDARIES
 
-- `macos/*` only handles sending keystrokes to the webview and opening the website there and should NEVER go off the domain of markdownbrowser.com/?client=macos. not part of this spec.
+- `macos/*` - only handles sending keystrokes to the webview and opening the website there and should NEVER go off the domain of markdownbrowser.com/?client=macos. not part of this spec.
 - `worker.ts` - the worker handles auth profiles for user and with that, can send authenticated requests, it serves one tool `fetch` that returns markdown, metadata from headers, and information on agent-friendliness.
 - `index.html` - the browser.
 
@@ -18,9 +18,9 @@ WORKER
 - Fetching should accept text/markdown,text/plain,`*/*` but use another fetch without accept header as fallback.
 - Only pass authorization header for extract and searches. if error, return that nicely.
 - if apiKey is available, `config.extractEngine` is used any website returns html
-- api key is used for search and extract urls as authorization bearer token
+- apiKey is used for search and extract urls as authorization bearer token
 
-Lay-out:
+LAY-OUT:
 
 - Style: use same look/feel as safari, but done purely in html, css, vanilla js
 - Mobile friendly
@@ -118,6 +118,14 @@ Give me a cloudflare worker that has the fetch endpoint and a static file index.
 
 TO BE ITERATED
 
+- Can this somehow be served as MCP UI as well? that'd make it a very interesting innovation!!! Could be shown as pip to see what the LLM has ingested.
+- Can this be served as chrome / safari extension and as single-tab? could also be great in that way as a devtool
+- Could it be possible to allow switching to the original site (using an iframe,potentially?) and is that useful for staying with the markdown longer?
+
+- PARALLEL llms.txt
+
+  - md should be better. ask team `/extract`
+
 - INDEX.HTML
 
   - History behavior isn't working correctly
@@ -127,5 +135,4 @@ TO BE ITERATED
 
   - How to handle `Link` response headers?
   - How to do login properly for 401 content? either allow opening popup with real website, or send this to human (e.g. to phone). Probably: Keep auth profiles on backend. Ability to login the browser to an X account, then set profiles. Browser should have ability to see login is available
-  - Can this somehow be served as MCP UI as well? that'd make it a very interesting innovation!!! Could be shown as pip to see what the LLM has ingested.
   - Imagine we'd support stream rendering results too! This'd be crazy cool for LLM outputs. We'd just need a slightly altered way of typing in urls.
