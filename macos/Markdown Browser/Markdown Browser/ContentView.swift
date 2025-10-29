@@ -30,12 +30,6 @@ class CustomWKWebView: WKWebView {
             case "n": // Command+N (New Window)
                 forwardKeyboardEvent(key: "n", metaKey: true)
                 return true
-            case "m": // Command+M (Minimize)
-                forwardKeyboardEvent(key: "m", metaKey: true)
-                return true
-            case "h": // Command+H (Hide)
-                forwardKeyboardEvent(key: "h", metaKey: true)
-                return true
             case "f": // Command+F (Search)
                 forwardKeyboardEvent(key: "f", metaKey: true)
                 return true
@@ -96,8 +90,6 @@ class CustomWKWebView: WKWebView {
         case "r": return 82
         case "l": return 76
         case "n": return 78
-        case "m": return 77
-        case "h": return 72
         case "f": return 70
         case ",": return 188
         default: return char.uppercased().unicodeScalars.first?.value.hashValue ?? 0
