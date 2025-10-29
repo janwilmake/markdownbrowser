@@ -12,7 +12,7 @@ Goal: Developer Tool for the transition to the Agent-Friendly Web
 - Get a feel for if the agent ever gets stuck or is limited in a way compared to the html-internet
 - MCP-compliant OAuth to access private info
 - Educate on the agent-friendliness of any website.
-- Potential use within MCP
+- Potential use within MCP: context-ingestion UI
 
 Non-goals: Everyday use
 
@@ -23,3 +23,9 @@ Non-goals: Everyday use
 # Installation
 
 We offer a standalone MacOS binary which can be downloaded [here](https://markdownbrowser.com/macos.zip), or simply use it through [markdownbrowser.com](https://markdownbrowser.com).
+
+# Related projects
+
+- [LLMTEXT](https://github.com/janwilmake/llmtext-mcp)
+- [GoogLLM](https://googllm.com)
+- [Agent-Friendly](https://github.com/janwilmake/agent-friendly)

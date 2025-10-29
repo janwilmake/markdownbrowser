@@ -118,10 +118,14 @@ Give me a cloudflare worker that has the fetch endpoint and a static file index.
 
 TO BE ITERATED
 
-- History behavior isn't working correctly
-- Somehow render markdown faster (maybe cache its innerhtml as well rather than having to do marked each time?)
-- How to handle Link response headers?
-- How to do login properly for 401 content? either allow opening popup with real website, or send this to human (e.g. to phone). Probably: Keep auth profiles on backend. Ability to login the browser to an X account, then set profiles. Browser should have ability to see login is available
-- can this somehow be served as MCP UI as well? that'd make it a very interesting innovation!!! Could be shown as pip to see what the LLM has ingested.
--
-- `markdownsearch` should be separate just like `googllm` and should use parallel's search
+- INDEX.HTML
+
+  - History behavior isn't working correctly
+  - Somehow render markdown faster (maybe cache its innerhtml as well rather than having to do marked each time?)
+
+- WORKER
+
+  - How to handle `Link` response headers?
+  - How to do login properly for 401 content? either allow opening popup with real website, or send this to human (e.g. to phone). Probably: Keep auth profiles on backend. Ability to login the browser to an X account, then set profiles. Browser should have ability to see login is available
+  - Can this somehow be served as MCP UI as well? that'd make it a very interesting innovation!!! Could be shown as pip to see what the LLM has ingested.
+  - Imagine we'd support stream rendering results too! This'd be crazy cool for LLM outputs. We'd just need a slightly altered way of typing in urls.
