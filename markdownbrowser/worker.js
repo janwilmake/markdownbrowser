@@ -1,112 +1,124 @@
 /**
- * Cloudflare Worker for fetching markdown content
- * Handles /fetch endpoint with proper content type negotiation
+ * Cloudflare Worker for markdown browser
+ * Handles proxying fetch requests with proper headers
  */
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // Handle /fetch endpoint
-    if (url.pathname === "/fetch") {
-      return handleFetchEndpoint(url);
+    // Handle CORS
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
     }
 
-    // All other requests fall through to static assets
+    // Handle /fetch endpoint
+    if (url.pathname === "/fetch" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const { url: targetUrl, extract, search, apiKey } = body;
+        console.log({ targetUrl });
+        if (!targetUrl) {
+          return jsonResponse({ error: "Missing url parameter" }, 400);
+        }
+
+        // Determine if we should use the extract service
+        const isExtractAvailable = extract && apiKey;
+        const isSearchUrl =
+          search && apiKey
+            ? targetUrl.startsWith(search.replace("%s", ""))
+            : false;
+
+        let fetchUrl = targetUrl;
+        const headers = new Headers();
+
+        // Use extract service for HTML content if apiKey is available
+        if (isSearchUrl) {
+          // For search URLs
+          headers.set("Authorization", `Bearer ${apiKey}`);
+        } else {
+          // For direct markdown/text fetches, set Accept header
+          headers.set("Accept", "text/markdown, text/plain, */*");
+        }
+
+        // First attempt with Accept header
+        let response = await fetch(fetchUrl, { headers });
+
+        // Fallback: try without Accept header if first attempt failed
+        if (!response.ok) {
+          response = await fetch(targetUrl);
+        }
+
+        if (
+          !response.ok ||
+          response.headers.get("content-type")?.includes("text/html")
+        ) {
+          if (isExtractAvailable) {
+            const extractUrl = extract.replace(
+              "%s",
+              encodeURIComponent(targetUrl)
+            );
+            const extractHeaders = new Headers();
+            extractHeaders.set("Authorization", `Bearer ${apiKey}`);
+
+            const extractResponse = await fetch(extractUrl, {
+              headers: extractHeaders,
+            });
+
+            if (extractResponse.ok) {
+              response = extractResponse;
+            } else {
+              throw new Error(
+                "Extract failed: " + extractUrl + "; " + extractResponse.status
+              );
+            }
+          } else {
+            throw new Error("Got HTML. Can only do this with Parallel apiKey");
+          }
+        }
+
+        const content = await response.text();
+        const contentType =
+          response.headers.get("content-type") || "text/plain";
+
+        return jsonResponse({
+          content,
+          contentType,
+          status: response.status,
+          ok: response.ok,
+          url: response.url,
+        });
+      } catch (error) {
+        return jsonResponse(
+          {
+            error: error.message,
+            details: "Failed to fetch the requested URL",
+          },
+          500
+        );
+      }
+    }
+
+    // Return 404 for unknown endpoints
     return new Response("Not Found", { status: 404 });
   },
 };
 
 /**
- * Handles the /fetch?url= endpoint
- * Fetches markdown/text content with proper error handling
+ * Helper function to return JSON response with CORS headers
  */
-async function handleFetchEndpoint(url) {
-  const targetUrl = url.searchParams.get("url");
-
-  if (!targetUrl) {
-    return jsonError("Missing url parameter", 400);
-  }
-
-  // Validate URL
-  let parsedUrl;
-  try {
-    parsedUrl = new URL(targetUrl);
-  } catch (e) {
-    return jsonError("Invalid URL format", 400);
-  }
-
-  try {
-    // First attempt with Accept headers
-    let response = await fetch(targetUrl, {
-      headers: {
-        Accept: "text/markdown, text/plain, */*",
-        "User-Agent": "MarkdownBrowser/1.0",
-      },
-    });
-
-    // If that fails, try without Accept header
-    if (!response.ok) {
-      response = await fetch(targetUrl, {
-        headers: {
-          "User-Agent": "MarkdownBrowser/1.0",
-        },
-      });
-    }
-
-    if (!response.ok) {
-      return jsonError(
-        `Failed to fetch: ${response.status} ${response.statusText}`,
-        response.status
-      );
-    }
-
-    const contentType = response.headers.get("content-type") || "";
-
-    // Check if HTML was returned (we don't want that)
-    if (contentType.includes("text/html")) {
-      return jsonError(
-        "HTML content returned. This browser only supports markdown and plain text.",
-        400
-      );
-    }
-
-    const content = await response.text();
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        content,
-        contentType,
-        url: targetUrl,
-      }),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-      }
-    );
-  } catch (error) {
-    return jsonError(`Network error: ${error.message}`, 500);
-  }
-}
-
-/**
- * Helper to return JSON error responses
- */
-function jsonError(message, status = 400) {
-  return new Response(
-    JSON.stringify({
-      success: false,
-      error: message,
-    }),
-    {
-      status,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-    }
-  );
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+    },
+  });
 }
