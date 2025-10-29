@@ -6,12 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Browser</title>
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
-    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-
     <style>
         * {
             margin: 0;
@@ -20,162 +14,131 @@
         }
 
         :root {
-            --safari-bg: #ffffff;
-            --safari-secondary: #f5f5f7;
-            --safari-border: #d1d1d6;
-            --safari-text: #1d1d1f;
-            --safari-text-secondary: #86868b;
-            --safari-accent: #007aff;
-            --safari-accent-hover: #0051d5;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-tertiary: #e8e8ed;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --border-color: #d2d2d7;
+            --accent-color: #007aff;
+            --accent-hover: #0051d5;
             --sidebar-width: 280px;
-            --toolbar-height: 44px;
-            --tab-height: 36px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1d1d1f;
+                --bg-secondary: #2c2c2e;
+                --bg-tertiary: #3a3a3c;
+                --text-primary: #f5f5f7;
+                --text-secondary: #98989d;
+                --border-color: #48484a;
+            }
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: var(--safari-text);
-            background: var(--safari-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             overflow: hidden;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Toolbar */
-        .toolbar {
-            height: var(--toolbar-height);
-            background: var(--safari-secondary);
-            border-bottom: 1px solid var(--safari-border);
+        /* Address Bar */
+        .address-bar {
             display: flex;
             align-items: center;
-            padding: 0 12px;
             gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
 
-        .nav-buttons {
-            display: flex;
-            gap: 4px;
-        }
-
-        .nav-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
+        .nav-button,
+        .config-button {
+            width: 32px;
+            height: 32px;
             border: none;
-            background: var(--safari-bg);
+            background: transparent;
             cursor: pointer;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--safari-text);
-            font-size: 16px;
+            color: var(--text-primary);
+            font-size: 18px;
         }
 
-        .nav-btn:hover {
-            background: #e8e8ed;
+        .nav-button:hover,
+        .config-button:hover {
+            background: var(--bg-tertiary);
         }
 
-        .nav-btn:disabled {
+        .nav-button:disabled {
             opacity: 0.3;
             cursor: not-allowed;
         }
 
-        .address-bar {
+        .url-input-wrapper {
             flex: 1;
             position: relative;
         }
 
-        .address-input {
+        .url-input {
             width: 100%;
-            height: 28px;
-            border-radius: 6px;
-            border: 1px solid var(--safari-border);
-            padding: 0 32px 0 28px;
-            font-size: 13px;
-            background: var(--safari-bg);
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
         }
 
-        .address-input:focus {
+        .url-input:focus {
             outline: none;
-            border-color: var(--safari-accent);
-        }
-
-        .address-icon {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--safari-text-secondary);
-            font-size: 14px;
-        }
-
-        .reload-btn {
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            border: none;
-            background: none;
-            cursor: pointer;
-            color: var(--safari-text-secondary);
-            font-size: 14px;
-        }
-
-        .sidebar-toggle {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            border: none;
-            background: var(--safari-bg);
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .sidebar-toggle:hover {
-            background: #e8e8ed;
+            border-color: var(--accent-color);
         }
 
         /* Tabs */
         .tabs-container {
-            height: var(--tab-height);
-            background: var(--safari-secondary);
-            border-bottom: 1px solid var(--safari-border);
             display: flex;
+            gap: 4px;
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
             overflow-x: auto;
-            overflow-y: hidden;
-        }
-
-        .tabs-container::-webkit-scrollbar {
-            height: 0;
-        }
-
-        .tab {
-            min-width: 160px;
-            max-width: 240px;
-            height: 100%;
-            background: var(--safari-bg);
-            border-right: 1px solid var(--safari-border);
-            display: flex;
-            align-items: center;
-            padding: 0 12px;
-            cursor: pointer;
-            position: relative;
             flex-shrink: 0;
         }
 
-        .tab:not(.active) {
-            background: var(--safari-secondary);
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+            min-width: 120px;
+            max-width: 200px;
         }
 
         .tab.active {
-            border-bottom: 2px solid var(--safari-accent);
+            background: var(--bg-primary);
+        }
+
+        .tab-favicon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
         }
 
         .tab-title {
             flex: 1;
-            font-size: 12px;
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -184,65 +147,67 @@
             width: 16px;
             height: 16px;
             border: none;
-            background: none;
+            background: transparent;
             cursor: pointer;
             font-size: 16px;
-            color: var(--safari-text-secondary);
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 8px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
         }
 
         .tab-close:hover {
-            color: var(--safari-text);
+            color: var(--text-primary);
         }
 
-        .new-tab-btn {
-            min-width: 32px;
-            height: 100%;
-            background: var(--safari-secondary);
+        .new-tab-button {
+            padding: 6px 12px;
+            background: transparent;
             border: none;
-            border-right: 1px solid var(--safari-border);
             cursor: pointer;
             font-size: 18px;
-            color: var(--safari-text-secondary);
+            color: var(--text-primary);
         }
 
-        .new-tab-btn:hover {
-            color: var(--safari-text);
-        }
-
-        /* Content Area */
-        .content-container {
+        /* Main Content */
+        .main-content {
             display: flex;
-            height: calc(100vh - var(--toolbar-height) - var(--tab-height));
+            flex: 1;
+            overflow: hidden;
         }
 
+        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--safari-secondary);
-            border-right: 1px solid var(--safari-border);
-            overflow-y: auto;
-            padding: 12px;
-            transition: margin-left 0.2s;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: margin-left 0.3s ease;
         }
 
         .sidebar.hidden {
             margin-left: calc(-1 * var(--sidebar-width));
         }
 
-        .sidebar-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
+        .sidebar-search {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .sidebar-description {
-            font-size: 12px;
-            color: var(--safari-text-secondary);
-            margin-bottom: 16px;
+        .sidebar-search input {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
         }
 
         .sidebar-section {
@@ -250,31 +215,27 @@
         }
 
         .section-header {
+            font-weight: 600;
+            font-size: 14px;
+            padding: 6px 0;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            cursor: pointer;
-            padding: 6px 0;
-            font-weight: 500;
-            font-size: 13px;
-            user-select: none;
+            gap: 6px;
         }
 
-        .section-header:hover {
-            color: var(--safari-accent);
-        }
-
-        .section-toggle {
-            width: 16px;
-            margin-right: 4px;
+        .section-header::before {
+            content: '▼';
+            font-size: 10px;
             transition: transform 0.2s;
         }
 
-        .section-header.collapsed .section-toggle {
+        .section-header.collapsed::before {
             transform: rotate(-90deg);
         }
 
         .section-files {
-            margin-left: 20px;
+            margin-left: 12px;
         }
 
         .section-files.hidden {
@@ -282,265 +243,343 @@
         }
 
         .file-item {
-            padding: 4px 0;
-            font-size: 12px;
-        }
-
-        .file-link {
-            color: var(--safari-accent);
-            text-decoration: none;
-            display: block;
-            padding: 2px 4px;
+            padding: 4px 8px;
+            font-size: 13px;
+            cursor: pointer;
             border-radius: 4px;
+            color: var(--text-secondary);
+            display: block;
+            text-decoration: none;
+            margin: 2px 0;
         }
 
-        .file-link:hover {
-            background: rgba(0, 122, 255, 0.1);
+        .file-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .file-nested {
+            margin-left: 16px;
+            padding-left: 12px;
+            border-left: 1px solid var(--border-color);
         }
 
         .sidebar-error {
-            color: #ff9500;
-            font-size: 12px;
             padding: 12px;
-            background: rgba(255, 149, 0, 0.1);
-            border-radius: 6px;
-            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-align: center;
         }
 
-        .main-content {
+        /* Page Content */
+        .page-content {
             flex: 1;
             overflow-y: auto;
             padding: 24px;
-            background: var(--safari-bg);
         }
 
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--safari-text-secondary);
-        }
-
-        .error {
-            color: #ff3b30;
-            padding: 24px;
-            background: rgba(255, 59, 48, 0.1);
-            border-radius: 8px;
-            margin: 24px;
-        }
-
-        .warning {
-            color: #ff9500;
-            padding: 16px;
-            background: rgba(255, 149, 0, 0.1);
-            border-radius: 8px;
-            margin-bottom: 24px;
-            border-left: 4px solid #ff9500;
-        }
-
-        .warning-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        /* Markdown Styles */
         .markdown-content {
             max-width: 800px;
             margin: 0 auto;
         }
 
-        .markdown-content h1 {
-            font-size: 32px;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--safari-border);
-        }
-
-        .markdown-content h2 {
-            font-size: 24px;
-            margin-top: 32px;
-            margin-bottom: 12px;
-        }
-
-        .markdown-content h3 {
-            font-size: 20px;
-            margin-top: 24px;
-            margin-bottom: 8px;
-        }
-
-        .markdown-content p {
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-
-        .markdown-content a {
-            color: var(--safari-accent);
-            text-decoration: none;
-        }
-
-        .markdown-content a:hover {
-            text-decoration: underline;
-        }
-
-        .markdown-content ul,
-        .markdown-content ol {
-            margin-bottom: 16px;
-            padding-left: 24px;
-        }
-
-        .markdown-content li {
-            margin-bottom: 8px;
-            line-height: 1.6;
-        }
-
-        .markdown-content pre {
-            background: var(--safari-secondary);
+        .markdown-content img {
+            max-width: 50%;
+            height: auto;
             border-radius: 8px;
-            padding: 16px;
-            overflow-x: auto;
-            margin-bottom: 16px;
-        }
-
-        .markdown-content code {
-            background: var(--safari-secondary);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-            font-family: 'Monaco', 'Menlo', monospace;
-        }
-
-        .markdown-content pre code {
-            background: none;
-            padding: 0;
         }
 
         .markdown-content table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 16px;
+            margin: 16px 0;
         }
 
         .markdown-content th,
         .markdown-content td {
-            border: 1px solid var(--safari-border);
             padding: 8px 12px;
+            border: 1px solid var(--border-color);
             text-align: left;
         }
 
         .markdown-content th {
-            background: var(--safari-secondary);
+            background: var(--bg-secondary);
             font-weight: 600;
         }
 
-        .markdown-content blockquote {
-            border-left: 4px solid var(--safari-border);
-            padding-left: 16px;
-            margin-bottom: 16px;
-            color: var(--safari-text-secondary);
-        }
-
-        /* Context Menu */
-        .context-menu {
-            position: fixed;
-            background: var(--safari-bg);
-            border: 1px solid var(--safari-border);
+        .markdown-content pre {
+            background: var(--bg-secondary);
+            padding: 16px;
             border-radius: 8px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-            z-index: 1000;
-            min-width: 180px;
-            padding: 4px 0;
-            display: none;
+            overflow-x: auto;
+            margin: 16px 0;
         }
 
-        .context-menu.visible {
-            display: block;
+        .markdown-content code {
+            background: var(--bg-secondary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
         }
 
-        .context-menu-item {
-            padding: 8px 16px;
+        .markdown-content pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        .frontmatter {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .frontmatter table {
+            width: 100%;
+        }
+
+        .frontmatter th {
+            text-align: left;
+            padding-right: 16px;
+            color: var(--text-secondary);
+            font-weight: normal;
+        }
+
+        .link-form {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            background: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 4px 0;
+        }
+
+        .link-form input {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .link-form button {
+            padding: 4px 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 13px;
         }
 
-        .context-menu-item:hover {
-            background: var(--safari-accent);
+        .link-form button:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Config Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            margin-bottom: 16px;
+        }
+
+        .config-field {
+            margin-bottom: 16px;
+        }
+
+        .config-field label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .config-field input,
+        .config-field textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .config-field textarea {
+            min-height: 80px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .modal-buttons button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .button-primary {
+            background: var(--accent-color);
             color: white;
+        }
+
+        .button-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .button-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .button-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
         }
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            :root {
-                --sidebar-width: 100%;
-            }
-
             .sidebar {
                 position: absolute;
-                height: calc(100vh - var(--toolbar-height) - var(--tab-height));
+                top: 0;
+                left: 0;
+                height: 100%;
                 z-index: 100;
             }
 
-            .sidebar.hidden {
-                margin-left: -100%;
-            }
-
-            .nav-buttons {
-                display: none;
-            }
-
-            .markdown-content {
+            .page-content {
                 padding: 16px;
             }
 
-            .main-content {
-                padding: 16px;
+            .markdown-content img {
+                max-width: 100%;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Toolbar -->
-    <div class="toolbar">
-        <div class="nav-buttons">
-            <button class="nav-btn" id="backBtn" title="Back">←</button>
-            <button class="nav-btn" id="forwardBtn" title="Forward">→</button>
+    <!-- Address Bar -->
+    <div class="address-bar">
+        <button class="nav-button" id="back-btn" title="Back">←</button>
+        <button class="nav-button" id="forward-btn" title="Forward">→</button>
+        <button class="nav-button" id="refresh-btn" title="Refresh">⟳</button>
+        <button class="nav-button" id="toggle-sidebar-btn" title="Toggle Sidebar">☰</button>
+        <div class="url-input-wrapper">
+            <input type="text" class="url-input" id="url-input" placeholder="Enter URL or search..."
+                list="hostname-list" autocomplete="off" autocorrect="off">
+            <datalist id="hostname-list"></datalist>
         </div>
-        <div class="address-bar">
-            <span class="address-icon">🔒</span>
-            <input type="text" class="address-input" id="addressInput" placeholder="Enter URL" list="hostnames"
-                autocorrect="off" autocomplete="off">
-            <datalist id="hostnames"></datalist>
-            <button class="reload-btn" id="reloadBtn">↻</button>
-        </div>
-        <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+        <button class="config-button" id="config-btn" title="Settings">⚙</button>
     </div>
 
     <!-- Tabs -->
-    <div class="tabs-container" id="tabsContainer">
-        <button class="new-tab-btn" id="newTabBtn">+</button>
+    <div class="tabs-container" id="tabs-container">
+        <button class="new-tab-button" id="new-tab-btn">+</button>
     </div>
 
-    <!-- Content -->
-    <div class="content-container">
-        <aside class="sidebar" id="sidebar">
-            <div id="sidebarContent"></div>
-        </aside>
-        <main class="main-content" id="mainContent">
-            <div class="loading">Enter a URL to get started</div>
-        </main>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-search">
+                <input type="text" id="sidebar-search" placeholder="Search...">
+            </div>
+            <div class="sidebar-content" id="sidebar-content">
+                <div class="sidebar-error">No navigation available</div>
+            </div>
+        </div>
+        <div class="page-content" id="page-content">
+            <div class="markdown-content">
+                <h1>Welcome to Markdown Browser</h1>
+                <p>Enter a URL to get started</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Context Menu -->
-    <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" id="openInNewTab">Open in New Tab</div>
+    <!-- Config Modal -->
+    <div class="modal-overlay" id="config-modal">
+        <div class="modal">
+            <h2>Settings</h2>
+            <div class="config-field">
+                <label for="config-search">Search URL (use %s for query)</label>
+                <input type="text" id="config-search" placeholder="https://search.p0web.com/search/%s">
+            </div>
+            <div class="config-field">
+                <label for="config-extract">Extract URL (use %s for target URL)</label>
+                <input type="text" id="config-extract" placeholder="https://llmtext.com/%s">
+            </div>
+            <div class="config-field">
+                <label for="config-shadow">Shadow Hostnames (JSON: {"old.com": "new.com"})</label>
+                <textarea id="config-shadow">{}</textarea>
+            </div>
+            <div class="config-field">
+                <label for="config-apikey">API Key (for search and extract)</label>
+                <input type="password" id="config-apikey" placeholder="Enter API key">
+            </div>
+            <div class="config-field" id="macos-download" style="display: none;">
+                <a href="/macos.zip" download>
+                    <button class="button-primary" style="width: 100%;">Download macOS App</button>
+                </a>
+                <a target="_blank" href="https://github.com/janwilmake/markdownbrowser"><button class="button-primary"
+                        style="width: 100%;">GitHub</button></a>
+            </div>
+
+
+            <div class="modal-buttons">
+                <button class="button-secondary" id="config-cancel">Cancel</button>
+                <button class="button-primary" id="config-save">Save</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Inline the llms.txt parser
+        // Parse llms.txt inline
         function parseLlmsTxt(markdown) {
-            const lines = markdown.split("\n");
-            const result = { title: "", sections: [] };
+            const lines = markdown.split('\n');
+            const result = { title: '', sections: [] };
             let currentSection = null;
             let detailsParts = [];
             let foundFirstH2 = false;
@@ -550,71 +589,55 @@
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
 
-                if (line.startsWith("# ")) {
+                if (line.startsWith('# ')) {
                     result.title = line.substring(2).trim();
                     continue;
                 }
 
-                if (line.startsWith("> ")) {
+                if (line.startsWith('> ')) {
                     if (!inBlockquote) {
                         inBlockquote = true;
                         blockquoteLines = [];
                     }
                     blockquoteLines.push(line.substring(2).trim());
                     continue;
-                } else if (inBlockquote && line === "") {
+                } else if (inBlockquote && line === '') {
                     continue;
                 } else if (inBlockquote) {
-                    result.description = blockquoteLines.join(" ").trim();
+                    result.description = blockquoteLines.join(' ').trim();
                     inBlockquote = false;
                     blockquoteLines = [];
 
-                    if (line.startsWith("## ")) {
+                    if (line.startsWith('## ')) {
                         foundFirstH2 = true;
-                        currentSection = {
-                            name: line.substring(3).trim(),
-                            files: [],
-                        };
+                        currentSection = { name: line.substring(3).trim(), files: [] };
                         continue;
-                    } else if (line !== "") {
+                    } else if (line !== '') {
                         detailsParts.push(line);
                         continue;
                     }
                 }
 
-                if (line.startsWith("## ")) {
+                if (line.startsWith('## ')) {
                     foundFirstH2 = true;
-                    if (currentSection) {
-                        result.sections.push(currentSection);
-                    }
-                    currentSection = {
-                        name: line.substring(3).trim(),
-                        files: [],
-                    };
+                    if (currentSection) result.sections.push(currentSection);
+                    currentSection = { name: line.substring(3).trim(), files: [] };
                     continue;
                 }
 
-                if (!foundFirstH2 && line !== "" && !line.startsWith("#")) {
+                if (!foundFirstH2 && line !== '' && !line.startsWith('#')) {
                     detailsParts.push(line);
                     continue;
                 }
 
-                if (currentSection && line.startsWith("- ")) {
+                if (currentSection && line.startsWith('- ')) {
                     const fileEntry = parseListLine(line);
-                    if (fileEntry) {
-                        currentSection.files.push(fileEntry);
-                    }
+                    if (fileEntry) currentSection.files.push(fileEntry);
                 }
             }
 
-            if (currentSection) {
-                result.sections.push(currentSection);
-            }
-
-            if (detailsParts.length > 0) {
-                result.details = detailsParts.join("\n").trim();
-            }
-
+            if (currentSection) result.sections.push(currentSection);
+            if (detailsParts.length > 0) result.details = detailsParts.join('\n').trim();
             return result;
         }
 
@@ -627,553 +650,644 @@
                 const url = linkMatch[2];
                 const afterLink = content.substring(linkMatch.index + linkMatch[0].length);
                 const colonMatch = afterLink.match(/:\s*(.+)/);
-
-                const fileEntry = {
-                    name: name.trim(),
-                    url: url.trim(),
-                };
-
-                if (colonMatch) {
-                    fileEntry.notes = colonMatch[1].trim();
-                }
-
+                const fileEntry = { name: name.trim(), url: url.trim() };
+                if (colonMatch) fileEntry.notes = colonMatch[1].trim();
                 return fileEntry;
             }
-
             return null;
         }
 
-        // App State
-        const HARDCODED_HOSTNAMES = [
-            "parallel.ai", "docs.tavus.io", "llmtext.com", "docs.cursor.com",
-            "docs.perplexity.ai", "bun.com", "docs.x.com", "vuejs.org",
-            "developers.cloudflare.com", "ast-grep.github.io", "community-charts.github.io",
-            "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com",
-            "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com",
-            "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com",
-            "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com",
-            "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io",
-            "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com",
-            "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io",
-            "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org",
-            "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com",
-            "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io",
-            "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com",
-            "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io",
-            "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com",
-            "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io",
-            "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com",
-            "docs.venice.ai", "docs.zep.us", "docs.wingbits.com",
-            "docs.bugsplat.com", "docs.flip.to", "docs.craft.co",
-            "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com",
-            "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai",
-            "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz",
-            "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com",
-            "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai",
-            "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja",
-            "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com",
-            "docs.imprint.co"
-        ];
-
-        class MarkdownBrowser {
-            constructor() {
-                this.state = this.loadState();
-                this.currentTabIndex = 0;
-                this.contextMenuLink = null;
-
-                this.initElements();
-                this.initEventListeners();
-                this.render();
-                this.updateHostnameDatalist();
-            }
-
-            initElements() {
-                this.addressInput = document.getElementById('addressInput');
-                this.backBtn = document.getElementById('backBtn');
-                this.forwardBtn = document.getElementById('forwardBtn');
-                this.reloadBtn = document.getElementById('reloadBtn');
-                this.sidebarToggle = document.getElementById('sidebarToggle');
-                this.sidebar = document.getElementById('sidebar');
-                this.sidebarContent = document.getElementById('sidebarContent');
-                this.mainContent = document.getElementById('mainContent');
-                this.tabsContainer = document.getElementById('tabsContainer');
-                this.newTabBtn = document.getElementById('newTabBtn');
-                this.contextMenu = document.getElementById('contextMenu');
-            }
-
-            initEventListeners() {
-                this.addressInput.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') this.navigate(this.addressInput.value);
-                });
-
-                this.backBtn.addEventListener('click', () => this.goBack());
-                this.forwardBtn.addEventListener('click', () => this.goForward());
-                this.reloadBtn.addEventListener('click', () => this.reload());
-                this.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
-                this.newTabBtn.addEventListener('click', () => this.newTab());
-
-                // Context menu
-                document.addEventListener('click', () => this.hideContextMenu());
-                document.getElementById('openInNewTab').addEventListener('click', () => {
-                    if (this.contextMenuLink) {
-                        this.newTab(this.contextMenuLink);
-                    }
-                });
-
-                // Handle link clicks in markdown content
-                this.mainContent.addEventListener('click', (e) => {
-                    if (e.target.tagName === 'A') {
-                        e.preventDefault();
-                        this.navigate(e.target.href);
-                    }
-                });
-
-                this.mainContent.addEventListener('contextmenu', (e) => {
-                    if (e.target.tagName === 'A') {
-                        e.preventDefault();
-                        this.showContextMenu(e.clientX, e.clientY, e.target.href);
-                    }
-                });
-            }
-
-            loadState() {
-                const saved = localStorage.getItem('markdownBrowser');
-                if (saved) {
-                    return JSON.parse(saved);
-                }
-                return {
+        // Storage Management
+        const storage = {
+            get() {
+                const data = localStorage.getItem('markdownBrowser');
+                return data ? JSON.parse(data) : {
+                    showSidebar: true,
                     llmstxt: {},
-                    tabs: [this.createEmptyTab()],
+                    tabs: [],
+                    config: {
+                        search: 'https://search.p0web.com/search/%s',
+                        extract: 'https://llmtext.com/%s',
+                        shadow: {},
+                        apiKey: ''
+                    }
                 };
+            },
+            save(data) {
+                localStorage.setItem('markdownBrowser', JSON.stringify(data));
+            }
+        };
+
+        let state = storage.get();
+        let currentTabIndex = 0;
+
+        const hardcodedHostnames = ["parallel.ai", "docs.tavus.io", "llmtext.com", "docs.cursor.com", "docs.perplexity.ai", "bun.com", "docs.x.com", "vuejs.org", "developers.cloudflare.com", "ast-grep.github.io", "community-charts.github.io", "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com", "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com", "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com", "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com", "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io", "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com", "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io", "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org", "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com", "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io", "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com", "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io", "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com", "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io", "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com", "docs.venice.ai", "docs.zep.us", "docs.wingbits.com", "docs.bugsplat.com", "docs.flip.to", "docs.craft.co", "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com", "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai", "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz", "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com", "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai", "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja", "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com", "docs.imprint.co"];
+
+        // Initialize
+        function init() {
+            if (state.tabs.length === 0) {
+                createNewTab();
+            }
+            renderTabs();
+            renderCurrentTab();
+            updateHostnameList();
+
+            // Show/hide macOS download button
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('client')) {
+                document.getElementById('macos-download').style.display = 'block';
             }
 
-            saveState() {
-                localStorage.setItem('markdownBrowser', JSON.stringify(this.state));
-            }
-
-            createEmptyTab() {
-                return {
-                    url: '',
-                    title: 'New Tab',
-                    description: '',
-                    sidebar: true,
-                    content: '',
-                    contentType: '',
-                    prev: [],
-                    next: [],
-                };
-            }
-
-            getCurrentTab() {
-                return this.state.tabs[this.currentTabIndex];
-            }
-
-            async navigate(inputUrl) {
-                if (!inputUrl) return;
-
-                // Add https:// if no protocol
-                let url = inputUrl;
-                if (!url.match(/^https?:\/\//)) {
-                    url = 'https://' + url;
-                }
-
-                const tab = this.getCurrentTab();
-
-                // Save current URL to history
-                if (tab.url) {
-                    tab.prev.push(tab.url);
-                    tab.next = [];
-                }
-
-                tab.url = url;
-                this.addressInput.value = url;
-
-                await this.loadUrl(url);
-            }
-
-            async loadUrl(url) {
-                const tab = this.getCurrentTab();
-
-                this.mainContent.innerHTML = '<div class="loading">Loading...</div>';
-                this.sidebarContent.innerHTML = '<div class="loading">Loading navigation...</div>';
-
-                try {
-                    // First, always load llms.txt
-                    await this.loadLlmsTxt(url);
-
-                    // Render sidebar immediately
-                    this.renderSidebar();
-
-                    // Then try to load the actual content
-                    const response = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.error);
-                    }
-
-                    tab.contentType = data.contentType || '';
-                    tab.content = data.content;
-
-                    // Check if content is HTML
-                    const isHtml = data.contentType && data.contentType.includes('text/html');
-
-                    if (isHtml) {
-                        // Show warning but display navigation from llms.txt
-                        tab.title = new URL(url).hostname;
-                        this.mainContent.innerHTML = `
-                            <div class="markdown-content">
-                                <div class="warning">
-                                    <div class="warning-title">⚠️ No Markdown at this Address</div>
-                                    <p>This URL returns HTML content, not markdown. Use the navigation sidebar to browse available markdown files.</p>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        // Parse title and description from markdown
-                        const lines = data.content.split('\n');
-                        const h1Match = lines.find(l => l.trim().startsWith('# '));
-                        if (h1Match) {
-                            tab.title = h1Match.substring(2).trim();
-                        } else {
-                            tab.title = new URL(url).hostname;
-                        }
-
-                        const blockquoteMatch = lines.find(l => l.trim().startsWith('> '));
-                        if (blockquoteMatch) {
-                            tab.description = blockquoteMatch.substring(2).trim();
-                        }
-
-                        // Render the markdown content
-                        this.mainContent.innerHTML = `
-                            <div class="markdown-content">
-                                ${this.renderMarkdown(tab.content)}
-                            </div>
-                        `;
-                    }
-
-                    this.renderTabs();
-                    this.saveState();
-
-                } catch (error) {
-                    // Even on error, keep sidebar visible
-                    this.mainContent.innerHTML = `
-                        <div class="markdown-content">
-                            <div class="error">Error loading content: ${error.message}</div>
-                            ${this.state.llmstxt[new URL(url).hostname] ?
-                            '<p style="margin-top: 16px;">Use the navigation sidebar to browse available content.</p>' :
-                            ''}
-                        </div>
-                    `;
-
-                    // Set a basic title
-                    tab.title = new URL(url).hostname;
-                    this.renderTabs();
-                }
-            }
-
-            async loadLlmsTxt(url) {
-                const parsedUrl = new URL(url);
-                const hostname = parsedUrl.hostname;
-                const origin = parsedUrl.origin;
-
-                // Check if we already have it
-                if (this.state.llmstxt[hostname]) {
-                    return;
-                }
-
-                try {
-                    const llmsUrl = `${origin}/llms.txt`;
-                    const response = await fetch(`/fetch?url=${encodeURIComponent(llmsUrl)}`);
-                    const data = await response.json();
-
-                    if (data.success && data.contentType && !data.contentType.includes('text/html')) {
-                        const parsed = parseLlmsTxt(data.content);
-                        this.state.llmstxt[hostname] = parsed;
-                        this.saveState();
-                        this.updateHostnameDatalist();
-                    }
-                } catch (error) {
-                    console.error('Failed to load llms.txt:', error);
-                }
-            }
-
-            renderMarkdown(content) {
-                return marked.parse(content);
-            }
-
-            renderSidebar() {
-                const tab = this.getCurrentTab();
-                if (!tab.url) {
-                    this.sidebarContent.innerHTML = '';
-                    return;
-                }
-
-                const hostname = new URL(tab.url).hostname;
-                const llmstxt = this.state.llmstxt[hostname];
-
-                if (!llmstxt) {
-                    this.sidebarContent.innerHTML = `
-                        <div class="sidebar-error">
-                            No llms.txt found for ${hostname}
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = '';
-                if (llmstxt.title) {
-                    html += `<div class="sidebar-title">${llmstxt.title}</div>`;
-                }
-                if (llmstxt.description) {
-                    html += `<div class="sidebar-description">${llmstxt.description}</div>`;
-                }
-
-                llmstxt.sections.forEach((section, idx) => {
-                    html += `
-                        <div class="sidebar-section">
-                            <div class="section-header" data-section="${idx}">
-                                <span class="section-toggle">▼</span>
-                                ${section.name}
-                            </div>
-                            <div class="section-files" data-section-content="${idx}">
-                                ${this.renderSectionFiles(section.files, new URL(tab.url).origin)}
-                            </div>
-                        </div>
-                    `;
-                });
-
-                this.sidebarContent.innerHTML = html;
-
-                // Add section toggle handlers
-                this.sidebarContent.querySelectorAll('.section-header').forEach(header => {
-                    header.addEventListener('click', (e) => {
-                        const sectionIdx = e.currentTarget.dataset.section;
-                        const content = this.sidebarContent.querySelector(`[data-section-content="${sectionIdx}"]`);
-                        const toggle = e.currentTarget;
-
-                        content.classList.toggle('hidden');
-                        toggle.classList.toggle('collapsed');
-                    });
-                });
-
-                // Add link handlers
-                this.sidebarContent.querySelectorAll('.file-link').forEach(link => {
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.navigate(link.href);
-                    });
-
-                    link.addEventListener('contextmenu', (e) => {
-                        e.preventDefault();
-                        this.showContextMenu(e.clientX, e.clientY, link.href);
-                    });
-                });
-            }
-
-            renderSectionFiles(files, origin) {
-                const grouped = {};
-
-                files.forEach(file => {
-                    try {
-                        const url = new URL(file.url, origin);
-                        const path = url.pathname.split('/').filter(p => p);
-
-                        if (path.length === 0) {
-                            if (!grouped['']) grouped[''] = [];
-                            grouped[''].push(file);
-                            return;
-                        }
-
-                        const dir = path.slice(0, -1).join('/');
-                        if (!grouped[dir]) grouped[dir] = [];
-                        grouped[dir].push(file);
-                    } catch (e) {
-                        if (!grouped['']) grouped[''] = [];
-                        grouped[''].push(file);
-                    }
-                });
-
-                let html = '';
-                Object.entries(grouped).forEach(([dir, files]) => {
-                    if (dir) {
-                        html += `<div style="margin-left: 8px; margin-top: 4px; font-weight: 500; font-size: 11px; color: var(--safari-text-secondary);">${dir}/</div>`;
-                    }
-                    files.forEach(file => {
-                        const fullUrl = file.url.startsWith('http') ? file.url : origin + (file.url.startsWith("/") ? file.url : '/' + file.url);
-                        html += `
-                            <div class="file-item" style="margin-left: ${dir ? '16px' : '0'}">
-                                <a href="${fullUrl}" class="file-link" title="${file.notes || ''}">${file.name}</a>
-                            </div>
-                        `;
-                    });
-                });
-
-                return html;
-            }
-
-            renderTabs() {
-                // Clear existing tabs except new tab button
-                while (this.tabsContainer.firstChild !== this.newTabBtn) {
-                    this.tabsContainer.removeChild(this.tabsContainer.firstChild);
-                }
-
-                this.state.tabs.forEach((tab, idx) => {
-                    const tabEl = document.createElement('div');
-                    tabEl.className = 'tab' + (idx === this.currentTabIndex ? ' active' : '');
-                    tabEl.innerHTML = `
-                        <span class="tab-title" title="${tab.description || ''}">${tab.title}</span>
-                        <button class="tab-close">×</button>
-                    `;
-
-                    tabEl.addEventListener('click', (e) => {
-                        if (!e.target.classList.contains('tab-close')) {
-                            this.switchTab(idx);
-                        }
-                    });
-
-                    tabEl.querySelector('.tab-close').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        this.closeTab(idx);
-                    });
-
-                    this.tabsContainer.insertBefore(tabEl, this.newTabBtn);
-                });
-            }
-
-            render() {
-                const tab = this.getCurrentTab();
-
-                this.renderTabs();
-                this.renderSidebar();
-
-                this.addressInput.value = tab.url;
-                this.backBtn.disabled = tab.prev.length === 0;
-                this.forwardBtn.disabled = tab.next.length === 0;
-
-                if (tab.content) {
-                    const isHtml = tab.contentType && tab.contentType.includes('text/html');
-                    if (isHtml) {
-                        this.mainContent.innerHTML = `
-                            <div class="markdown-content">
-                                <div class="warning">
-                                    <div class="warning-title">⚠️ No Markdown at this Address</div>
-                                    <p>This URL returns HTML content, not markdown. Use the navigation sidebar to browse available markdown files.</p>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        this.mainContent.innerHTML = `
-                            <div class="markdown-content">
-                                ${this.renderMarkdown(tab.content)}
-                            </div>
-                        `;
-                    }
-                } else if (tab.url) {
-                    this.mainContent.innerHTML = '<div class="loading">Loading...</div>';
-                } else {
-                    this.mainContent.innerHTML = '<div class="loading">Enter a URL to get started</div>';
-                }
-            }
-
-            newTab(url = '') {
-                const tab = this.createEmptyTab();
-                this.state.tabs.push(tab);
-                this.currentTabIndex = this.state.tabs.length - 1;
-
-                if (url) {
-                    this.navigate(url);
-                } else {
-                    this.render();
-                    this.addressInput.focus();
-                }
-
-                this.saveState();
-            }
-
-            closeTab(idx) {
-                if (this.state.tabs.length === 1) {
-                    this.state.tabs[0] = this.createEmptyTab();
-                    this.currentTabIndex = 0;
-                } else {
-                    this.state.tabs.splice(idx, 1);
-                    if (this.currentTabIndex >= this.state.tabs.length) {
-                        this.currentTabIndex = this.state.tabs.length - 1;
-                    }
-                }
-
-                this.render();
-                this.saveState();
-            }
-
-            switchTab(idx) {
-                this.currentTabIndex = idx;
-                this.render();
-            }
-
-            goBack() {
-                const tab = this.getCurrentTab();
-                if (tab.prev.length === 0) return;
-
-                const url = tab.prev.pop();
-                tab.next.unshift(tab.url);
-                tab.url = url;
-
-                this.loadUrl(url);
-            }
-
-            goForward() {
-                const tab = this.getCurrentTab();
-                if (tab.next.length === 0) return;
-
-                const url = tab.next.shift();
-                tab.prev.push(tab.url);
-                tab.url = url;
-
-                this.loadUrl(url);
-            }
-
-            reload() {
-                const tab = this.getCurrentTab();
-                if (tab.url) {
-                    this.loadUrl(tab.url);
-                }
-            }
-
-            toggleSidebar() {
-                this.sidebar.classList.toggle('hidden');
-                const tab = this.getCurrentTab();
-                tab.sidebar = !this.sidebar.classList.contains('hidden');
-                this.saveState();
-            }
-
-            showContextMenu(x, y, url) {
-                this.contextMenuLink = url;
-                this.contextMenu.style.left = x + 'px';
-                this.contextMenu.style.top = y + 'px';
-                this.contextMenu.classList.add('visible');
-            }
-
-            hideContextMenu() {
-                this.contextMenu.classList.remove('visible');
-                this.contextMenuLink = null;
-            }
-
-            updateHostnameDatalist() {
-                const datalist = document.getElementById('hostnames');
-                const hostnames = new Set([
-                    ...HARDCODED_HOSTNAMES,
-                    ...Object.keys(this.state.llmstxt),
-                ]);
-
-                datalist.innerHTML = Array.from(hostnames)
-                    .map(h => `<option value="https://${h}">`)
-                    .join('');
+            // Restore sidebar state
+            if (!state.showSidebar) {
+                document.getElementById('sidebar').classList.add('hidden');
             }
         }
 
-        // Initialize app
-        const app = new MarkdownBrowser();
+        // Tabs Management
+        function createNewTab(url = '') {
+            const tab = {
+                url: url,
+                title: 'New Tab',
+                description: '',
+                sidebar: true,
+                content: '',
+                prev: [],
+                next: []
+            };
+            state.tabs.push(tab);
+            currentTabIndex = state.tabs.length - 1;
+            storage.save(state);
+            return tab;
+        }
+
+        function closeTab(index) {
+            if (state.tabs.length === 1) return;
+            state.tabs.splice(index, 1);
+            if (currentTabIndex >= state.tabs.length) {
+                currentTabIndex = state.tabs.length - 1;
+            }
+            storage.save(state);
+            renderTabs();
+            renderCurrentTab();
+        }
+
+        function switchTab(index) {
+            currentTabIndex = index;
+            renderCurrentTab();
+            renderTabs();
+        }
+
+        function renderTabs() {
+            const container = document.getElementById('tabs-container');
+            const existingTabs = container.querySelectorAll('.tab');
+            existingTabs.forEach(tab => tab.remove());
+
+            state.tabs.forEach((tab, index) => {
+                const tabEl = document.createElement('div');
+                tabEl.className = `tab ${index === currentTabIndex ? 'active' : ''}`;
+
+                const favicon = document.createElement('img');
+                favicon.className = 'tab-favicon';
+                favicon.src = getFavicon(tab.url);
+                favicon.onerror = () => favicon.style.display = 'none';
+
+                const title = document.createElement('span');
+                title.className = 'tab-title';
+                title.textContent = tab.title || 'New Tab';
+                title.title = tab.description || tab.title;
+
+                const closeBtn = document.createElement('button');
+                closeBtn.className = 'tab-close';
+                closeBtn.textContent = '×';
+                closeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    closeTab(index);
+                };
+
+                tabEl.appendChild(favicon);
+                tabEl.appendChild(title);
+                tabEl.appendChild(closeBtn);
+                tabEl.onclick = () => switchTab(index);
+
+                container.insertBefore(tabEl, document.getElementById('new-tab-btn'));
+            });
+        }
+
+        function getFavicon(url) {
+            if (!url) return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
+            try {
+                const urlObj = new URL(url);
+                return `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
+            } catch {
+                return 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>';
+            }
+        }
+
+        // URL Loading
+        async function loadUrl(url) {
+            const tab = state.tabs[currentTabIndex];
+
+            // Add to history
+            if (tab.url) {
+                tab.prev.push(tab.url);
+                tab.next = [];
+            }
+
+            // Handle search
+            if (!url.includes('.') && !url.startsWith('http')) {
+                url = state.config.search.replace('%s', encodeURIComponent(url));
+            } else if (!url.startsWith('http')) {
+                url = 'https://' + url;
+            }
+
+            // Apply shadow hostnames
+            url = applyShadowHostname(url);
+
+            tab.url = url;
+            document.getElementById('url-input').value = url;
+
+            try {
+                // Show loading
+                document.getElementById('page-content').innerHTML = '<div class="loading">Loading...</div>';
+
+                // Fetch llms.txt
+                await fetchLlmsTxt(url)
+
+                try {
+                    // Fetch content
+                    const response = await fetch('/fetch', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            url: url,
+                            extract: state.config.extract,
+                            search: state.config.search,
+                            apiKey: state.config.apiKey
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    tab.content = data.content;
+
+                    // Parse title and description
+                    const parsed = parseMarkdown(data.content);
+                    tab.title = parsed.title || new URL(url).hostname;
+                    tab.description = parsed.description || '';
+
+                    storage.save(state);
+                    renderCurrentTab();
+                    renderTabs();
+
+                } catch (error) {
+                    document.getElementById('page-content').innerHTML = `
+          <div class="markdown-content">
+            <h1>Error Loading Page</h1>
+            <p>${error.message}</p>
+          </div>
+        `;
+                }
+            } catch (error) {
+                document.getElementById('page-content').innerHTML = `
+          <div class="markdown-content">
+            <h1>Error Loading llms.txt</h1>
+            <p>${error.message}</p>
+          </div>
+        `;
+            }
+        }
+
+        function applyShadowHostname(url) {
+            try {
+                const urlObj = new URL(url);
+                if (state.config.shadow[urlObj.hostname]) {
+                    urlObj.hostname = state.config.shadow[urlObj.hostname];
+                    return urlObj.toString();
+                }
+            } catch { }
+            return url;
+        }
+
+        async function fetchLlmsTxt(url) {
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname;
+
+                if (state.llmstxt[hostname]) return;
+
+                const llmsUrl = `${urlObj.protocol}//${hostname}/llms.txt`;
+                const response = await fetch('/fetch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: llmsUrl,
+                    })
+                });
+
+                const data = await response.json();
+                if (data.ok && data.content) {
+                    state.llmstxt[hostname] = parseLlmsTxt(data.content);
+                    storage.save(state);
+                }
+            } catch (error) {
+                console.warn('Could not fetch llms.txt:', error);
+            }
+        }
+
+        function parseMarkdown(content) {
+            const result = { title: '', description: '', frontmatter: null };
+
+            // Parse frontmatter
+            if (content.startsWith('---')) {
+                const endIndex = content.indexOf('---', 3);
+                if (endIndex !== -1) {
+                    const frontmatter = content.substring(3, endIndex).trim();
+                    result.frontmatter = {};
+                    frontmatter.split('\n').forEach(line => {
+                        const [key, ...values] = line.split(':');
+                        if (key && values.length) {
+                            result.frontmatter[key.trim()] = values.join(':').trim();
+                        }
+                    });
+                    content = content.substring(endIndex + 3);
+                }
+            }
+
+            // Extract title from first H1
+            const h1Match = content.match(/^#\s+(.+)$/m);
+            if (h1Match) {
+                result.title = h1Match[1];
+            }
+
+            // Extract description from first paragraph
+            const paragraphMatch = content.match(/\n\n(.+?)(\n\n|$)/);
+            if (paragraphMatch) {
+                result.description = paragraphMatch[1].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').substring(0, 200);
+            }
+
+            return result;
+        }
+
+        // Rendering
+        function renderCurrentTab() {
+            const tab = state.tabs[currentTabIndex];
+            document.getElementById('url-input').value = tab.url || '';
+
+            // Update navigation buttons
+            document.getElementById('back-btn').disabled = tab.prev.length === 0;
+            document.getElementById('forward-btn').disabled = tab.next.length === 0;
+
+            // Render content
+            if (tab.content) {
+                renderContent(tab.content, tab.url);
+            }
+
+            // Render sidebar
+            renderSidebar(tab.url);
+        }
+
+        function renderContent(content, baseUrl) {
+            const parsed = parseMarkdown(content);
+            let html = '';
+
+            // Render frontmatter
+            if (parsed.frontmatter) {
+                html += '<div class="frontmatter"><table>';
+                for (const [key, value] of Object.entries(parsed.frontmatter)) {
+                    html += `<tr><th>${escapeHtml(key)}</th><td>${escapeHtml(value)}</td></tr>`;
+                }
+                html += '</table></div>';
+            }
+
+            // Remove frontmatter from content
+            if (content.startsWith('---')) {
+                const endIndex = content.indexOf('---', 3);
+                if (endIndex !== -1) {
+                    content = content.substring(endIndex + 3);
+                }
+            }
+
+            // Render markdown
+            html += marked.parse(content);
+
+            // Process custom link syntax
+            html = processCustomLinks(html, baseUrl);
+
+            const container = document.getElementById('page-content');
+            container.innerHTML = `<div class="markdown-content">${html}</div>`;
+
+            // Setup link handlers
+            container.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    let href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && baseUrl) {
+                        href = new URL(href, baseUrl).toString();
+                    }
+                    loadUrl(href);
+                });
+
+                link.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    let href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && baseUrl) {
+                        href = new URL(href, baseUrl).toString();
+                    }
+                    createNewTab(href);
+                    switchTab(state.tabs.length - 1);
+                    loadUrl(href);
+                });
+            });
+        }
+
+        function processCustomLinks(html, baseUrl) {
+            return html.replace(/<a href="([^"]*\{[^}]+\}[^"]*)"[^>]*>([^<]+)<\/a>/g, (match, href, text) => {
+                const variables = [...href.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
+                if (variables.length === 0) return match;
+
+                let form = '<form class="link-form" onsubmit="return false;">';
+                variables.forEach(varName => {
+                    form += `<input type="text" placeholder="${escapeHtml(varName)}" data-var="${escapeHtml(varName)}">`;
+                });
+                form += `<button onclick="submitLinkForm(this, '${escapeHtml(href)}', '${baseUrl || ''}')">${escapeHtml(text)}</button>`;
+                form += '</form>';
+                return form;
+            });
+        }
+
+        window.submitLinkForm = function (button, template, baseUrl) {
+            const form = button.closest('.link-form');
+            const inputs = form.querySelectorAll('input');
+            let url = template;
+
+            inputs.forEach(input => {
+                const varName = input.dataset.var;
+                const value = input.value;
+                url = url.replace(`{${varName}}`, encodeURIComponent(value));
+            });
+
+            if (baseUrl && !url.startsWith('http')) {
+                url = new URL(url, baseUrl).toString();
+            }
+
+            loadUrl(url);
+        };
+
+        function renderSidebar(url) {
+            const sidebarContent = document.getElementById('sidebar-content');
+
+            if (!url) {
+                sidebarContent.innerHTML = '<div class="sidebar-error">No navigation available</div>';
+                return;
+            }
+
+            try {
+                const urlObj = new URL(url);
+                const hostname = urlObj.hostname;
+                const llmstxt = state.llmstxt[hostname];
+
+                if (!llmstxt) {
+                    sidebarContent.innerHTML = '<div class="sidebar-error">No llms.txt found for this site</div>';
+                    return;
+                }
+
+                let html = '';
+                llmstxt.sections.forEach((section, sectionIndex) => {
+                    html += `
+            <div class="sidebar-section">
+              <div class="section-header" onclick="toggleSection(${sectionIndex})">
+                ${escapeHtml(section.name)}
+              </div>
+              <div class="section-files" id="section-${sectionIndex}">
+          `;
+
+                    // Group files by path
+                    const fileTree = buildFileTree(section.files);
+                    html += renderFileTree(fileTree, urlObj.origin);
+
+                    html += `</div></div>`;
+                });
+
+                sidebarContent.innerHTML = html;
+
+            } catch (error) {
+                sidebarContent.innerHTML = '<div class="sidebar-error">Error rendering navigation</div>';
+            }
+        }
+
+        function buildFileTree(files) {
+            const tree = {};
+            files.forEach(file => {
+                try {
+                    const url = new URL(file.url);
+                    const pathParts = url.pathname.split('/').filter(p => p);
+
+                    let current = tree;
+                    pathParts.forEach((part, index) => {
+                        if (index === pathParts.length - 1) {
+                            if (!current._files) current._files = [];
+                            current._files.push({ ...file, filename: part });
+                        } else {
+                            if (!current[part]) current[part] = {};
+                            current = current[part];
+                        }
+                    });
+                } catch {
+                    if (!tree._files) tree._files = [];
+                    tree._files.push(file);
+                }
+            });
+            return tree;
+        }
+
+        function renderFileTree(tree, origin, depth = 0) {
+            let html = '';
+
+            // Render directories
+            for (const [key, value] of Object.entries(tree)) {
+                if (key === '_files') continue;
+                html += `
+          <div class="file-nested" style="margin-left: ${depth * 4}px">
+            <div class="section-header" onclick="toggleFileSection(this)">
+              ${escapeHtml(key)}
+            </div>
+            <div class="section-files">
+              ${renderFileTree(value, origin, depth + 1)}
+            </div>
+          </div>
+        `;
+            }
+
+            // Render files
+            if (tree._files) {
+                tree._files.forEach(file => {
+                    const fullUrl = file.url.startsWith('http') ? file.url : origin + (file.url.startsWith("/") ? file.url : "/" + file.url);
+                    html += `
+            <a href="${escapeHtml(fullUrl)}" 
+               class="file-item" 
+               title="${escapeHtml(file.notes || file.name)}"
+               style="margin-left: ${depth * 4}px"
+               onclick="event.preventDefault(); loadUrl('${escapeHtml(fullUrl)}')">
+              ${escapeHtml(file.filename || file.name)}
+            </a>
+          `;
+                });
+            }
+
+            return html;
+        }
+
+        window.toggleSection = function (index) {
+            const section = document.getElementById(`section-${index}`);
+            const header = section.previousElementSibling;
+            section.classList.toggle('hidden');
+            header.classList.toggle('collapsed');
+        };
+
+        window.toggleFileSection = function (header) {
+            const section = header.nextElementSibling;
+            section.classList.toggle('hidden');
+            header.classList.toggle('collapsed');
+        };
+
+        function updateHostnameList() {
+            const datalist = document.getElementById('hostname-list');
+            const hostnames = [...new Set([...Object.keys(state.llmstxt), ...hardcodedHostnames])];
+            datalist.innerHTML = hostnames.map(h => `<option value="https://${h}">`).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Event Listeners
+        document.getElementById('url-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                loadUrl(e.target.value);
+            }
+        });
+
+        document.getElementById('back-btn').addEventListener('click', () => {
+            const tab = state.tabs[currentTabIndex];
+            if (tab.prev.length > 0) {
+                const url = tab.prev.pop();
+                tab.next.unshift(tab.url);
+                tab.url = url;
+                storage.save(state);
+                loadUrl(url);
+            }
+        });
+
+        document.getElementById('forward-btn').addEventListener('click', () => {
+            const tab = state.tabs[currentTabIndex];
+            if (tab.next.length > 0) {
+                const url = tab.next.shift();
+                tab.prev.push(tab.url);
+                tab.url = url;
+                storage.save(state);
+                loadUrl(url);
+            }
+        });
+
+        document.getElementById('refresh-btn').addEventListener('click', () => {
+            const tab = state.tabs[currentTabIndex];
+            if (tab.url) {
+                tab.content = '';
+                loadUrl(tab.url);
+            }
+        });
+
+        document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+            state.showSidebar = !state.showSidebar;
+            document.getElementById('sidebar').classList.toggle('hidden');
+            storage.save(state);
+        });
+
+        document.getElementById('new-tab-btn').addEventListener('click', () => {
+            createNewTab();
+            renderTabs();
+            renderCurrentTab();
+        });
+
+        document.getElementById('config-btn').addEventListener('click', () => {
+            document.getElementById('config-search').value = state.config?.search;
+            document.getElementById('config-extract').value = state.config?.extract;
+            document.getElementById('config-shadow').value = JSON.stringify(state.config.shadow, null, 2);
+            document.getElementById('config-apikey').value = state.config?.apiKey;
+            document.getElementById('config-modal').classList.add('visible');
+        });
+
+        document.getElementById('config-cancel').addEventListener('click', () => {
+            document.getElementById('config-modal').classList.remove('visible');
+        });
+
+        document.getElementById('config-save').addEventListener('click', () => {
+            try {
+                state.config.search = document.getElementById('config-search').value;
+                state.config.extract = document.getElementById('config-extract').value;
+                state.config.shadow = JSON.parse(document.getElementById('config-shadow').value);
+                state.config.apiKey = document.getElementById('config-apikey').value;
+                storage.save(state);
+                document.getElementById('config-modal').classList.remove('visible');
+                updateHostnameList();
+            } catch (error) {
+                alert('Invalid JSON in shadow hostnames: ' + error.message);
+            }
+        });
+
+        document.getElementById('config-modal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                document.getElementById('config-modal').classList.remove('visible');
+            }
+        });
+
+        document.getElementById('sidebar-search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.file-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const notes = item.title.toLowerCase();
+                if (text.includes(query) || notes.includes(query)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey)) {
+                if (e.key === 't') {
+                    e.preventDefault();
+                    createNewTab();
+                    renderTabs();
+                    renderCurrentTab();
+                } else if (e.key === 'w') {
+                    e.preventDefault();
+                    if (state.tabs.length > 1) {
+                        closeTab(currentTabIndex);
+                    }
+                } else if (e.key === 'r') {
+                    e.preventDefault();
+                    document.getElementById('refresh-btn').click();
+                } else if (e.key === 'n') {
+                    e.preventDefault();
+                    createNewTab();
+                    renderTabs();
+                    renderCurrentTab();
+                }
+            }
+        });
+
+        // Initialize
+        init();
     </script>
 </body>
 
