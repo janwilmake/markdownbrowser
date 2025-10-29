@@ -20,4 +20,4 @@ Non-goals: Everyday use
 
 # Installation
 
-We offer a standalone MacOS binary which can be downloaded [here](https://markdownbrowser.com/macos.zip) simply use it through [markdownbrowser.com](https://markdownbrowser.com).
+We offer a standalone MacOS binary which can be downloaded [here](https://markdownbrowser.com/macos.zip), or simply use it through [markdownbrowser.com](https://markdownbrowser.com).

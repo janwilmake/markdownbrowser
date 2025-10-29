@@ -6,12 +6,6 @@ https://uithub.com/janwilmake/gists/tree/main/named-codeblocks.md
 PROMPT:
 Create a markdown browser for me as a cloudflare worker and a Static HTML file index.html
 
-The features:
-
-- Storage: local storage for `{ showSidebar:boolean, llmstxt: {[hostname:string]: Parse }, openTabIndex:number, tabs: { url:string, title:string, description:string, sidebar:boolean, content:string, prev:string[], next:string[] }[], config: { search:"https://search.p0web.com/search/%s", extract:"https://llmtext.com/%s", shadow:{ [hostname:string]: string },apiKey:string} }`
-- Style: use same look/feel as safari, but done purely in html, css, vanilla js
-- Mobile friendly
-
 Worker
 
 - `POST /fetch` with `{extract,search,apiKey,url}`
@@ -20,11 +14,39 @@ Worker
 - if apiKey is available, `config.extract` is used any website returns html
 - api key is used for search and extract urls as authorization bearer token
 
-Lay out
+Lay-out:
 
+- Style: use same look/feel as safari, but done purely in html, css, vanilla js
+- Mobile friendly
 - The address bar up top with back/next/refresh/toggle-menu icons, then address/search bar, then config icon on the right.
 - Tabs below
 - Below that, show the active tab rendered as markdown, with a sidebar at the left that can be toggled to show or hide
+
+Local storage:
+
+```ts
+type Config = {
+  showSidebar: boolean;
+  llmstxt: { [hostname: string]: Parse };
+  openTabIndex: number;
+  tabs: {
+    url: string;
+    title: string;
+    description: string;
+    sidebar: boolean;
+    content: string;
+    prev: string[];
+    next: string[];
+  }[];
+  config: {
+    search: string; // default: "https://search.p0web.com/search/%s"
+    extract: string; //default: "https://llmtext.com/%s"
+    homepage: string; // default: "https://markdownbrowser.com/homepage"
+    shadow: { [hostname: string]: string };
+    apiKey: string;
+  };
+};
+```
 
 ADDRESS BAR (and url loading)
 
@@ -67,7 +89,12 @@ PAGE
 
 EXTRA
 
-- shortcuts for closing a tab, opening a tab, refresh ~(both ctrl as well as cmd with w,t,n,r respectively)
+- shortcuts (both cmd and ctrl)
+  - w: closing a tab
+  - n/t: opening a tab
+  - r: refresh
+  - l: focus address bar
+  - .: open config
 - if location queryparam `?open={url}` was found, open a new tab with that value
 
 Give me a cloudflare worker that has the fetch endpoint and a static file index.html with this functionality. NB: do not include html content in the worker, it can separately be served using public folder (also no env.ASSETS needed)
