@@ -10,9 +10,8 @@ A SwiftUI application for browsing and viewing markdown files.
 
 ## Requirements
 
-- iOS 17.0+ / macOS 14.0+
-- Xcode 15.0+
-- Swift 5.9+
+- macOS 11.5+
+- Xcode 26.0+
 
 ## Getting Started
 
