@@ -821,9 +821,9 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             url: url,
-                            extract: state.config.extract,
-                            search: state.config.search,
-                            apiKey: state.config.apiKey
+                            extract: state.config?.extract,
+                            search: state.config?.search,
+                            apiKey: state.config?.apiKey
                         })
                     });
 
@@ -1219,7 +1219,7 @@
         document.getElementById('config-btn').addEventListener('click', () => {
             document.getElementById('config-search').value = state.config?.search;
             document.getElementById('config-extract').value = state.config?.extract;
-            document.getElementById('config-shadow').value = JSON.stringify(state.config.shadow, null, 2);
+            document.getElementById('config-shadow').value = JSON.stringify(state.config?.shadow, null, 2);
             document.getElementById('config-apikey').value = state.config?.apiKey;
             document.getElementById('config-modal').classList.add('visible');
         });
