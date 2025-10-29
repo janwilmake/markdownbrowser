@@ -10,26 +10,37 @@ import WebKit
 
 class CustomWKWebView: WKWebView {
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
-        // Disable common keyboard shortcuts
+        // Intercept and forward common keyboard shortcuts to the WebView
         if event.modifierFlags.contains(.command) {
-            switch event.charactersIgnoringModifiers {
-            case "t", "T": // Command+T (New Tab)
+            let key = event.charactersIgnoringModifiers?.lowercased() ?? ""
+            
+            switch key {
+            case "t": // Command+T (New Tab)
+                forwardKeyboardEvent(key: "t", metaKey: true)
                 return true
-            case "w", "W": // Command+W (Close Window/Tab)
+            case "w": // Command+W (Close Window/Tab)
+                forwardKeyboardEvent(key: "w", metaKey: true)
                 return true
-            case "r", "R": // Command+R (Refresh)
+            case "r": // Command+R (Refresh)
+                forwardKeyboardEvent(key: "r", metaKey: true)
                 return true
-            case "l", "L": // Command+L (Location bar)
+            case "l": // Command+L (Location bar)
+                forwardKeyboardEvent(key: "l", metaKey: true)
                 return true
-            case "n", "N": // Command+N (New Window)
+            case "n": // Command+N (New Window)
+                forwardKeyboardEvent(key: "n", metaKey: true)
                 return true
-            case "m", "M": // Command+M (Minimize)
+            case "m": // Command+M (Minimize)
+                forwardKeyboardEvent(key: "m", metaKey: true)
                 return true
-            case "h", "H": // Command+H (Hide)
+            case "h": // Command+H (Hide)
+                forwardKeyboardEvent(key: "h", metaKey: true)
                 return true
-            case "f", "F": // Command+F (Search)
+            case "f": // Command+F (Search)
+                forwardKeyboardEvent(key: "f", metaKey: true)
                 return true
             case ",": // Command+, (Preferences)
+                forwardKeyboardEvent(key: ",", metaKey: true)
                 return true
             default:
                 break
@@ -38,6 +49,59 @@ class CustomWKWebView: WKWebView {
         
         // Call super for other key combinations
         return super.performKeyEquivalent(with: event)
+    }
+    
+    private func forwardKeyboardEvent(key: String, metaKey: Bool = false, ctrlKey: Bool = false, altKey: Bool = false, shiftKey: Bool = false) {
+        // Create a JavaScript keyboard event and dispatch it
+        let jsCode = """
+            (function() {
+                var event = new KeyboardEvent('keydown', {
+                    key: '\(key)',
+                    code: 'Key\(key.uppercased())',
+                    keyCode: \(keyCodeForCharacter(key)),
+                    which: \(keyCodeForCharacter(key)),
+                    metaKey: \(metaKey),
+                    ctrlKey: \(ctrlKey),
+                    altKey: \(altKey),
+                    shiftKey: \(shiftKey),
+                    bubbles: true,
+                    cancelable: true
+                });
+                document.dispatchEvent(event);
+                
+                // Also dispatch keyup event
+                var keyupEvent = new KeyboardEvent('keyup', {
+                    key: '\(key)',
+                    code: 'Key\(key.uppercased())',
+                    keyCode: \(keyCodeForCharacter(key)),
+                    which: \(keyCodeForCharacter(key)),
+                    metaKey: \(metaKey),
+                    ctrlKey: \(ctrlKey),
+                    altKey: \(altKey),
+                    shiftKey: \(shiftKey),
+                    bubbles: true,
+                    cancelable: true
+                });
+                document.dispatchEvent(keyupEvent);
+            })();
+        """
+        
+        evaluateJavaScript(jsCode, completionHandler: nil)
+    }
+    
+    private func keyCodeForCharacter(_ char: String) -> Int {
+        switch char.lowercased() {
+        case "t": return 84
+        case "w": return 87
+        case "r": return 82
+        case "l": return 76
+        case "n": return 78
+        case "m": return 77
+        case "h": return 72
+        case "f": return 70
+        case ",": return 188
+        default: return char.uppercased().unicodeScalars.first?.value.hashValue ?? 0
+        }
     }
 }
 
