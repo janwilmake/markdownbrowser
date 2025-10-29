@@ -1,0 +1,25 @@
+// swift-tools-version: 5.9
+import PackageDescription
+
+let package = Package(
+    name: "Markdown_Browser",
+    platforms: [
+        .iOS(.v17),
+        .macOS(.v14)
+    ],
+    dependencies: [
+         .package(url: "https://github.com/supernovaio/markdownbrowser.git", from: "1.0.0"),
+    ],
+    targets: [
+        .target(
+            name: "Markdown_Browser",
+            dependencies: [
+                // Reference your dependencies here
+            ]
+        ),
+        .testTarget(
+            name: "Markdown_BrowserTests",
+            dependencies: ["Markdown_Browser"]
+        )
+    ]
+)
