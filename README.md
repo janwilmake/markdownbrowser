@@ -20,6 +20,13 @@ Non-goals: Everyday use
 - Login into the browser, store browsing history in personal DO, get insights.
 - A way (and possibly, standard) for people to download new content from websites they're interested in, taking it fully offline.
 
+Core principles:
+
+- **Search Engine** - Search API to use for searches
+- **Fetch Engine** - Fetch API to use for all fetching
+- **llms.txt** - Provides the navigation
+- **Shadow Sites** - Replace a website with an agent-friendly one
+
 # Installation
 
 We offer a standalone MacOS binary which can be downloaded [here](https://markdownbrowser.com/macos.zip), or simply use it through [markdownbrowser.com](https://markdownbrowser.com).
