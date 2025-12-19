@@ -1113,6 +1113,19 @@
             return result;
         }
 
+        // Helper to resolve relative URLs
+        function resolveUrl(url, baseUrl) {
+            if (!url || url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+                return url;
+            }
+
+            try {
+                return new URL(url, baseUrl).toString();
+            } catch {
+                return url;
+            }
+        }
+
         // Rendering
         function renderCurrentTab() {
             const tab = state.tabs[currentTabIndex];
@@ -1167,7 +1180,7 @@
                     e.preventDefault();
                     let href = link.getAttribute('href');
                     if (href && !href.startsWith('http') && baseUrl) {
-                        href = new URL(href, baseUrl).toString();
+                        href = resolveUrl(href, baseUrl);
                     }
                     loadUrl(href);
                 });
@@ -1176,11 +1189,59 @@
                     e.preventDefault();
                     let href = link.getAttribute('href');
                     if (href && !href.startsWith('http') && baseUrl) {
-                        href = new URL(href, baseUrl).toString();
+                        href = resolveUrl(href, baseUrl);
                     }
                     createNewTab(href);
                     switchTab(state.tabs.length - 1);
                     loadUrl(href);
+                });
+            });
+
+            // Fix relative URLs in images
+            container.querySelectorAll('img').forEach(img => {
+                const src = img.getAttribute('src');
+                if (src && baseUrl) {
+                    img.src = resolveUrl(src, baseUrl);
+                }
+            });
+
+            // Fix relative URLs in videos
+            container.querySelectorAll('video').forEach(video => {
+                const src = video.getAttribute('src');
+                if (src && baseUrl) {
+                    video.src = resolveUrl(src, baseUrl);
+                }
+
+                // Also handle source elements
+                video.querySelectorAll('source').forEach(source => {
+                    const sourceSrc = source.getAttribute('src');
+                    if (sourceSrc && baseUrl) {
+                        source.src = resolveUrl(sourceSrc, baseUrl);
+                    }
+                });
+            });
+
+            // Fix relative URLs in iframes
+            container.querySelectorAll('iframe').forEach(iframe => {
+                const src = iframe.getAttribute('src');
+                if (src && baseUrl) {
+                    iframe.src = resolveUrl(src, baseUrl);
+                }
+            });
+
+            // Fix relative URLs in audio elements
+            container.querySelectorAll('audio').forEach(audio => {
+                const src = audio.getAttribute('src');
+                if (src && baseUrl) {
+                    audio.src = resolveUrl(src, baseUrl);
+                }
+
+                // Also handle source elements
+                audio.querySelectorAll('source').forEach(source => {
+                    const sourceSrc = source.getAttribute('src');
+                    if (sourceSrc && baseUrl) {
+                        source.src = resolveUrl(sourceSrc, baseUrl);
+                    }
                 });
             });
         }
@@ -1212,7 +1273,7 @@
             });
 
             if (baseUrl && !url.startsWith('http')) {
-                url = new URL(url, baseUrl).toString();
+                url = resolveUrl(url, baseUrl);
             }
 
             loadUrl(url);

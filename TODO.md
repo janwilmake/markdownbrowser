@@ -1,19 +1,15 @@
 # MAKE IT PRETTY
 
-- improve rendering of markdown
-
-# IF TIME
-
-- make `llmstxt.llmtext.com/{domain}` - should use `explore-sitemaps` with the recommended caching and output an `llms.txt`.
-- use https://crawl.llmtext.com as fallback to sitemap not being found and generate a llms.txt from that.
-- use `llmstxt.llmtext.com/{domain}` as fallback to `llms.txt` not being found in markdownbrowser
-- allow choosing the llms.txt source: `auto`, `explore-sitemaps`, `crawl`, or `website`
+- ✅ improve rendering of markdown
+- Use `llmstxt.llmtext.com/{domain}` as fallback to `llms.txt` not being found in markdownbrowser
+- Allow choosing the llms.txt source: `auto`, `explore-sitemaps`, `crawl`, or `website`
 
 # PITCH IT
 
 - write blog about it
 - make video about it
 - next monday pitch it (and pitch original job title)
+- 2600 git stars earned
 
 # Later: automatic clean-up
 

@@ -1,0 +1,5 @@
+- One html file that contains an entire browser
+- 3 core concepts: search, extract, and shadow hostnames
+- Purpose: help devs see if their website is AI accessible
+- Adding the shared crawler for efficiency
+- Future work to be done
