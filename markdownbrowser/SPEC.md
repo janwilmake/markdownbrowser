@@ -96,7 +96,7 @@ PAGE
   - speed
 - Render frontmatter (as a table)
 - When fetching a url, use `/fetch?url=`. Ensure to prepend origin from the current url if url was relative.
-- Ensure to use a proper markdown renderer like marked and also nicely render codeblocks and tables etc.
+- Ensure to use a proper markdown renderer like marked and also nicely render codeblocks and tables etc. ensure images/videos/etc are rendered with a max size, and ensure there's appropriate spacing everywhere.
 - Links should always open in current tab and have a right click contextmenu that would open it in a new tab
 - render images elegantly, with a max width of 50% of the screen
 - custom syntax for links: links that contain variables as `{variableName}` should be rendered as text forms where each variable is a text input and the link text is the submit button.
