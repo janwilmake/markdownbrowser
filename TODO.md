@@ -14,6 +14,7 @@
 - next monday pitch it (and pitch original job title)
 - 2600 git stars earned
 
-# Later: automatic clean-up
+# Later
 
-If Durable Object SQLite storage becomes too expensive, we have all information needed to clean up entries.
+- Automatic clean-up: If Durable Object SQLite storage becomes too expensive, we have all information needed to clean up entries.
+- Security and authentication: The shadow-sites require authentication; the browser needs to handle this!
