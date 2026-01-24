@@ -189,6 +189,56 @@
             margin-left: calc(-1 * var(--sidebar-width));
         }
 
+        .sidebar-header {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .llmstxt-source {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .refresh-llmstxt {
+            width: 24px;
+            height: 24px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .refresh-llmstxt:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .refresh-llmstxt.loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .sidebar-search {
             padding: 12px;
             border-bottom: 1px solid var(--border-color);
@@ -269,6 +319,15 @@
             color: var(--text-secondary);
             font-size: 13px;
             text-align: center;
+        }
+
+        .sidebar-info {
+            padding: 8px;
+            margin: 8px 0;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
         }
 
         /* Page Content */
@@ -595,7 +654,8 @@
         }
 
         .config-field input,
-        .config-field textarea {
+        .config-field textarea,
+        .config-field select {
             width: 100%;
             padding: 8px 12px;
             border: 1px solid var(--border-color);
@@ -704,6 +764,14 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <select class="llmstxt-source" id="llmstxt-source">
+                    <option value="auto">Auto (fallback to crawl)</option>
+                    <option value="website">Website only</option>
+                    <option value="crawl">Crawl only</option>
+                </select>
+                <button class="refresh-llmstxt" id="refresh-llmstxt" title="Refresh llms.txt">⟳</button>
+            </div>
             <div class="sidebar-search">
                 <input type="text" id="sidebar-search" placeholder="Search...">
             </div>
@@ -725,7 +793,7 @@
             <h2>Settings</h2>
             <div class="config-field">
                 <label for="config-search">Search URL (use %s for query)</label>
-                <input type="text" id="config-search" placeholder="https://googllm.com/search/%s">
+                <input type="text" id="config-search" placeholder="https://search.p0web.com/search/%s">
             </div>
             <div class="config-field">
                 <label for="config-extract">Extract URL (use %s for target URL)</label>
@@ -739,6 +807,14 @@
                 <label for="config-apikey">API Key (for search and extract)</label>
                 <input type="password" id="config-apikey" placeholder="Enter API key">
             </div>
+            <div class="config-field">
+                <label for="config-llmstxt-default">Default llms.txt source</label>
+                <select id="config-llmstxt-default">
+                    <option value="auto">Auto (fallback to crawl)</option>
+                    <option value="website">Website only</option>
+                    <option value="crawl">Crawl only</option>
+                </select>
+            </div>
             <div class="config-field" id="macos-download" style="display: none;">
                 <a href="/macos.zip" download>
                     <button class="button-primary" style="width: 100%;">Download macOS App</button>
@@ -746,7 +822,6 @@
                 <a target="_blank" href="https://github.com/janwilmake/markdownbrowser"><button class="button-primary"
                         style="width: 100%;">GitHub</button></a>
             </div>
-
 
             <div class="modal-buttons">
                 <button class="button-secondary" id="config-cancel">Cancel</button>
@@ -849,7 +924,8 @@
                         search: 'https://search.p0web.com/search/%s',
                         extract: 'https://llmtext.com/%s',
                         shadow: {},
-                        apiKey: ''
+                        apiKey: '',
+                        llmstxtDefault: 'auto'
                     }
                 };
             },
@@ -882,6 +958,9 @@
             if (!state.showSidebar) {
                 document.getElementById('sidebar').classList.add('hidden');
             }
+
+            // Restore llms.txt source preference
+            document.getElementById('llmstxt-source').value = state.config.llmstxtDefault || 'auto';
         }
 
         // Tabs Management
@@ -893,7 +972,8 @@
                 sidebar: true,
                 content: '',
                 prev: [],
-                next: []
+                next: [],
+                llmstxtSource: state.config.llmstxtDefault || 'auto'
             };
             state.tabs.push(tab);
             currentTabIndex = state.tabs.length - 1;
@@ -992,7 +1072,7 @@
                 document.getElementById('page-content').innerHTML = '<div class="loading">Loading...</div>';
 
                 // Fetch llms.txt
-                await fetchLlmsTxt(url)
+                await fetchLlmsTxt(url, false);
 
                 try {
                     // Fetch content
@@ -1053,25 +1133,64 @@
             return url;
         }
 
-        async function fetchLlmsTxt(url) {
+        async function fetchLlmsTxt(url, forceRefresh = false) {
             try {
                 const urlObj = new URL(url);
                 const hostname = urlObj.hostname;
+                const tab = state.tabs[currentTabIndex];
+                const source = tab.llmstxtSource || 'auto';
 
-                if (state.llmstxt[hostname]) return;
+                // Check cache unless forcing refresh
+                if (!forceRefresh && state.llmstxt[hostname] && state.llmstxt[hostname][source]) {
+                    return;
+                }
+
+                // Initialize hostname cache if needed
+                if (!state.llmstxt[hostname]) {
+                    state.llmstxt[hostname] = {};
+                }
 
                 const llmsUrl = `${urlObj.protocol}//${hostname}/llms.txt`;
-                const response = await fetch('/fetch', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        url: llmsUrl,
-                    })
-                });
+                let content = null;
+                let fromCrawl = false;
 
-                const data = await response.json();
-                if (data.ok && data.content) {
-                    state.llmstxt[hostname] = parseLlmsTxt(data.content);
+                // Try website first if source is 'website' or 'auto'
+                if (source === 'website' || source === 'auto') {
+                    try {
+                        const response = await fetch('/fetch', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ url: llmsUrl })
+                        });
+
+                        const data = await response.json();
+                        if (data.ok && data.content) {
+                            content = data.content;
+                        }
+                    } catch (error) {
+                        console.warn('Could not fetch llms.txt from website:', error);
+                    }
+                }
+
+                // Fallback to crawl if source is 'crawl' or 'auto' and website failed
+                if (!content && (source === 'crawl' || source === 'auto')) {
+                    try {
+                        const crawlUrl = `https://crawl.llmtext.com/${hostname}/llms.txt`;
+                        const response = await fetch(crawlUrl);
+
+                        if (response.ok) {
+                            content = await response.text();
+                            fromCrawl = true;
+                        }
+                    } catch (error) {
+                        console.warn('Could not fetch llms.txt from crawl service:', error);
+                    }
+                }
+
+                if (content) {
+                    const parsed = parseLlmsTxt(content);
+                    parsed.source = fromCrawl ? 'crawl' : 'website';
+                    state.llmstxt[hostname][source] = parsed;
                     storage.save(state);
                 }
             } catch (error) {
@@ -1131,6 +1250,9 @@
             const tab = state.tabs[currentTabIndex];
             document.getElementById('url-input').value = tab.url || '';
 
+            // Update llms.txt source selector
+            document.getElementById('llmstxt-source').value = tab.llmstxtSource || 'auto';
+
             // Update navigation buttons
             document.getElementById('back-btn').disabled = tab.prev.length === 0;
             document.getElementById('forward-btn').disabled = tab.next.length === 0;
@@ -1168,7 +1290,7 @@
             // Render markdown
             html += marked.parse(content);
 
-            // Process custom link syntax
+            // Process custom links
             html = processCustomLinks(html, baseUrl);
 
             const container = document.getElementById('page-content');
@@ -1212,7 +1334,6 @@
                     video.src = resolveUrl(src, baseUrl);
                 }
 
-                // Also handle source elements
                 video.querySelectorAll('source').forEach(source => {
                     const sourceSrc = source.getAttribute('src');
                     if (sourceSrc && baseUrl) {
@@ -1229,14 +1350,13 @@
                 }
             });
 
-            // Fix relative URLs in audio elements
+            // Fix relative URLs in audio
             container.querySelectorAll('audio').forEach(audio => {
                 const src = audio.getAttribute('src');
                 if (src && baseUrl) {
                     audio.src = resolveUrl(src, baseUrl);
                 }
 
-                // Also handle source elements
                 audio.querySelectorAll('source').forEach(source => {
                     const sourceSrc = source.getAttribute('src');
                     if (sourceSrc && baseUrl) {
@@ -1290,7 +1410,9 @@
             try {
                 const urlObj = new URL(url);
                 const hostname = urlObj.hostname;
-                const llmstxt = state.llmstxt[hostname];
+                const tab = state.tabs[currentTabIndex];
+                const source = tab.llmstxtSource || 'auto';
+                const llmstxt = state.llmstxt[hostname]?.[source];
 
                 if (!llmstxt) {
                     sidebarContent.innerHTML = '<div class="sidebar-error">No llms.txt found for this site</div>';
@@ -1298,6 +1420,12 @@
                 }
 
                 let html = '';
+
+                // Show source info
+                if (llmstxt.source) {
+                    html += `<div class="sidebar-info">Source: ${llmstxt.source === 'crawl' ? 'Crawl Service' : 'Website'}</div>`;
+                }
+
                 llmstxt.sections.forEach((section, sectionIndex) => {
                     html += `
             <div class="sidebar-section">
@@ -1462,6 +1590,7 @@
             document.getElementById('config-extract').value = state.config?.extract;
             document.getElementById('config-shadow').value = JSON.stringify(state.config?.shadow, null, 2);
             document.getElementById('config-apikey').value = state.config?.apiKey;
+            document.getElementById('config-llmstxt-default').value = state.config?.llmstxtDefault || 'auto';
             document.getElementById('config-modal').classList.add('visible');
         });
 
@@ -1475,6 +1604,7 @@
                 state.config.extract = document.getElementById('config-extract').value;
                 state.config.shadow = JSON.parse(document.getElementById('config-shadow').value);
                 state.config.apiKey = document.getElementById('config-apikey').value;
+                state.config.llmstxtDefault = document.getElementById('config-llmstxt-default').value;
                 storage.save(state);
                 document.getElementById('config-modal').classList.remove('visible');
                 updateHostnameList();
@@ -1502,6 +1632,43 @@
             });
         });
 
+        // llms.txt source selector
+        document.getElementById('llmstxt-source').addEventListener('change', (e) => {
+            const tab = state.tabs[currentTabIndex];
+            tab.llmstxtSource = e.target.value;
+            storage.save(state);
+            if (tab.url) {
+                fetchLlmsTxt(tab.url, true).then(() => renderSidebar(tab.url));
+            }
+        });
+
+        // Refresh llms.txt button
+        document.getElementById('refresh-llmstxt').addEventListener('click', async () => {
+            const tab = state.tabs[currentTabIndex];
+            if (!tab.url) return;
+
+            const btn = document.getElementById('refresh-llmstxt');
+            btn.classList.add('loading');
+
+            try {
+                const urlObj = new URL(tab.url);
+                const hostname = urlObj.hostname;
+                const source = tab.llmstxtSource || 'auto';
+
+                // Clear cached llms.txt for this source
+                if (state.llmstxt[hostname]) {
+                    delete state.llmstxt[hostname][source];
+                }
+
+                await fetchLlmsTxt(tab.url, true);
+                renderSidebar(tab.url);
+            } catch (error) {
+                console.error('Error refreshing llms.txt:', error);
+            } finally {
+                btn.classList.remove('loading');
+            }
+        });
+
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey)) {
@@ -1523,6 +1690,23 @@
                     createNewTab();
                     renderTabs();
                     renderCurrentTab();
+                } else if (e.key === 'l') {
+                    e.preventDefault();
+                    document.getElementById('url-input').select();
+                } else if (e.key === '.') {
+                    e.preventDefault();
+                    document.getElementById('config-btn').click();
+                }
+            } else if (e.ctrlKey && e.key === 'Tab') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    // Previous tab
+                    const newIndex = currentTabIndex > 0 ? currentTabIndex - 1 : state.tabs.length - 1;
+                    switchTab(newIndex);
+                } else {
+                    // Next tab
+                    const newIndex = currentTabIndex < state.tabs.length - 1 ? currentTabIndex + 1 : 0;
+                    switchTab(newIndex);
                 }
             }
         });

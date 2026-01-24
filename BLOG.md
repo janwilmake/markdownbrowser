@@ -1,6 +1,6 @@
 # Introducing Markdown Browser - A Developer Tool for making your website more agent-friendly
 
-In the last few years we've seen dozens of startups building Agents that can automate browsing the web that was made for humans. But the internet is going to be used by agents 1000x more than humans soon. So shouldn't web publishers start being more concerned about how their content looks to agents? Shouldn't there be a tool to see how your content looks for AI agents? 
+In the last few years we've seen dozens of startups building Agents that can automate browsing the web that was made for humans. But the internet is going to be used by agents 1000x more than humans soon. So shouldn't web publishers start being more concerned about how their content looks to agents? Shouldn't there be a tool to see how your content looks for AI agents?
 
 https://markdownbrowser.com does just that. It's a browser that leverages the [llms.txt standard](https://llmstxt.org) to navigate each website. If there is no such file available by the author of the website, markdownbrowser relies on several strategies to create one and make any website available in simple markdown format.
 
@@ -20,13 +20,13 @@ This is SEO for the agent era. Just like businesses learned to optimize for Goog
 
 ### If You're Building AI Agents
 
-You've probably wrestled with web scraping. It's fragile, expensive, and breaks whenever a site redesigns. Markdown versions of the web are cheaper to process (fewer tokens wasted on HTML cruft), more reliable, and easier to reason about. 
+You've probably wrestled with web scraping. It's fragile, expensive, and breaks whenever a site redesigns. Markdown versions of the web are cheaper to process (fewer tokens wasted on HTML cruft), more reliable, and easier to reason about.
 
 The more publishers adopt llms.txt and agent-friendly formats, the better your agents will perform. Markdown Browser helps accelerate that adoption by making the problem visible.
 
 ### If You're Just Curious
 
-There's something fascinating about seeing the internet through different eyes. We've spent 30 years building a web optimized for human vision - colors, layouts, animations. But that's not how agents experience it. They see text, structure, and relationships. 
+There's something fascinating about seeing the internet through different eyes. We've spent 30 years building a web optimized for human vision - colors, layouts, animations. But that's not how agents experience it. They see text, structure, and relationships.
 
 Browsing in markdown strips away the visual noise and reveals the actual information architecture of websites. It's like looking at the skeleton of the web. Some sites have beautiful, logical structures. Others are chaos held together by CSS. Either way, it's illuminating.
 
@@ -61,9 +61,9 @@ The following are non-goals, or goals that I decided not to focus on at this sta
 
 The browser has the following core elements that make it usable for everyday use:
 
-**Search Engine** 
+**Search Engine**
 
-Search API to use for searches. This defaults to search using [Parallel](https://parallel.ai), but can be changed in to any other search engine, as long as it supports markdown results. 
+Search API to use for searches. This defaults to search using [Parallel](https://parallel.ai), but can be changed in to any other search engine, as long as it supports markdown results.
 
 **Extract Engine**
 
@@ -71,11 +71,12 @@ The extract engine is the engine that is used for turning a HTML page into markd
 
 **llms.txt**
 
-The [llms.txt standard](https://llmstxt.org) is a simple format to create an overview of what is available on a website, and has many potential applications. So far, some developers have used it with their IDE and coding agents to fetch proper documentation context. With [llmtext mcp](https://github.com/janwilmake/LLMTEXT-mcp) a website with an llms.txt is also made available as MCP. With markdown browser, the llms.txt is used as a way to navigate the website for the user, allowing an easy way to navigate through the website top-down from a sidebar. 
+The [llms.txt standard](https://llmstxt.org) is a simple format to create an overview of what is available on a website, and has many potential applications. So far, some developers have used it with their IDE and coding agents to fetch proper documentation context. With [llmtext mcp](https://github.com/janwilmake/LLMTEXT-mcp) a website with an llms.txt is also made available as MCP. With markdown browser, the llms.txt is used as a way to navigate the website for the user, allowing an easy way to navigate through the website top-down from a sidebar.
 
-**Shadow Sites** 
+**Shadow Sites**
 
 Most websites don't serve [Markdown](https://www.markdownguide.org) yet, and the extract engine can't always access the content needed. This is why markdownbrowser introduces the concept of shadow sites, allowing to replace a website with an agent-friendly one. When people visit a URL that is marked as having a shadow site, they get redirected to this shadow site such that they get the content they are looking for. We invite the open source community to create shadow-sites for all popular websites that don't do it themselves, so we can more easily transition to an agent-friendly internet.
 
 ## Future work
 
+??
