@@ -347,6 +347,10 @@
             color: var(--text-secondary);
         }
 
+        .sidebar-overlay {
+            display: none;
+        }
+
         /* Page Content */
         .page-content {
             flex: 1;
@@ -732,28 +736,127 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            .address-bar {
+                gap: 4px;
+                padding: 6px 8px;
+            }
+
+            .nav-button,
+            .config-button {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+                flex-shrink: 0;
+            }
+
+            .url-input {
+                padding: 6px 8px;
+                font-size: 16px; /* prevents iOS zoom on focus */
+            }
+
+            .tab {
+                max-width: 160px;
+                padding: 6px 8px;
+                font-size: 12px;
+            }
+
             .sidebar {
                 position: absolute;
                 top: 0;
                 left: 0;
+                width: 85vw;
+                max-width: 320px;
                 height: 100%;
                 z-index: 100;
+                box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar.hidden {
+                margin-left: -85vw;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.3);
+                z-index: 99;
+            }
+
+            .sidebar-overlay.visible {
+                display: block;
             }
 
             .page-content {
-                padding: 24px 16px;
+                padding: 20px 12px;
+            }
+
+            .markdown-content {
+                max-width: 100%;
             }
 
             .markdown-content h1 {
-                font-size: 2em;
+                font-size: 1.75em;
             }
 
             .markdown-content h2 {
-                font-size: 1.5em;
+                font-size: 1.4em;
             }
 
             .markdown-content h3 {
-                font-size: 1.25em;
+                font-size: 1.15em;
+            }
+
+            .markdown-content p,
+            .markdown-content li {
+                font-size: 1em;
+            }
+
+            .markdown-content pre {
+                padding: 1em;
+                font-size: 0.85em;
+            }
+
+            .markdown-content table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .markdown-content th,
+            .markdown-content td {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+
+            .markdown-content blockquote {
+                padding: 0.75em 1em;
+                margin: 1em 0;
+            }
+
+            .markdown-content img,
+            .markdown-content video {
+                margin: 1em 0;
+            }
+
+            .status-bar {
+                gap: 8px;
+                padding: 2px 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .status-bar-item {
+                font-size: 11px;
+            }
+
+            .modal {
+                width: 95%;
+                padding: 16px;
+                max-height: 90vh;
             }
         }
 
@@ -830,6 +933,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <span style="flex:1;font-size:12px;font-weight:600;color:var(--text-secondary)">Navigation</span>
@@ -1036,6 +1140,14 @@
                 document.getElementById('sidebar').classList.add('hidden');
             }
 
+            // On mobile, default sidebar to hidden
+            if (window.innerWidth <= 768 && state.showSidebar) {
+                state.showSidebar = false;
+                document.getElementById('sidebar').classList.add('hidden');
+                storage.save(state);
+            }
+
+            updateSidebarOverlay();
         }
 
         // Tabs Management
@@ -1749,11 +1861,30 @@
             }
         });
 
+        function updateSidebarOverlay() {
+            const overlay = document.getElementById('sidebar-overlay');
+            if (window.innerWidth <= 768) {
+                overlay.classList.toggle('visible', state.showSidebar);
+            } else {
+                overlay.classList.remove('visible');
+            }
+        }
+
         document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
             state.showSidebar = !state.showSidebar;
             document.getElementById('sidebar').classList.toggle('hidden');
+            updateSidebarOverlay();
             storage.save(state);
         });
+
+        document.getElementById('sidebar-overlay').addEventListener('click', () => {
+            state.showSidebar = false;
+            document.getElementById('sidebar').classList.add('hidden');
+            updateSidebarOverlay();
+            storage.save(state);
+        });
+
+        window.addEventListener('resize', updateSidebarOverlay);
 
         document.getElementById('new-tab-btn').addEventListener('click', () => {
             createNewTab();
