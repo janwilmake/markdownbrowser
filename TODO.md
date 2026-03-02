@@ -22,9 +22,9 @@
 
 - ✅ review the blogpost
 - ✅ create thread
-- oss the repo
-- publish thread on X
-- publish website on HN
+- ✅ oss the repo
+- ✅ publish thread on X
+- ✅ publish website on HN
 
 # Later
 
