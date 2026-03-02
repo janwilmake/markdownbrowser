@@ -19,8 +19,7 @@
 
 # PITCH IT
 
-- review the blogpost
-- improve
+- ✅ review the blogpost
 - evening: create thread, push to X + HN
 
 # Later
