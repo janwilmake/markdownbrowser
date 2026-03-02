@@ -16,6 +16,7 @@
 - ✅ Cmd+click a url should open it in a new tab
 - ✅ Add devtools statusbar
 - ✅ native fixes for opening urls
+- ✅ add token count
 
 # PITCH IT
 

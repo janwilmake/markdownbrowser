@@ -860,6 +860,10 @@
             <span class="status-bar-label">llms.txt:</span>
             <span class="status-bar-value" id="status-llmstxt">-</span>
         </span>
+        <span class="status-bar-item">
+            <span class="status-bar-label">Tokens:</span>
+            <span class="status-bar-value" id="status-tokens">-</span>
+        </span>
         <span class="status-bar-spacer"></span>
         <button class="status-bar-button" id="status-open-browser" title="Open in regular browser">Open in Browser ↗</button>
     </div>
@@ -1686,6 +1690,7 @@
                 } catch {}
             }
             document.getElementById('status-llmstxt').textContent = llmstxtStatus;
+            document.getElementById('status-tokens').textContent = tab.content ? Math.round(tab.content.length / 5).toLocaleString() : '-';
         }
 
         document.getElementById('status-open-browser').addEventListener('click', () => {
