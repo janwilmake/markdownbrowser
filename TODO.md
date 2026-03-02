@@ -15,6 +15,7 @@
   saved so it renders fast. maybe the div can just be hidden instead of removed when swithcin tabs. as long as it's fast
 - ✅ Cmd+click a url should open it in a new tab
 - ✅ Add devtools statusbar
+- ✅ native fixes for opening urls
 
 # TODO
 
