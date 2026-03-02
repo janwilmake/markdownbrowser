@@ -3,6 +3,26 @@
  * Handles proxying fetch requests with proper headers
  */
 
+const MARKDOWN_HOMEPAGE = `# Markdown Browser
+
+> A browser for the machine-readable web.
+
+Browse any website as clean markdown, navigate [llms.txt](https://llmstxt.org) sitemaps, and see the internet through the eyes of AI agents.
+
+## Features
+
+- **llms.txt navigation** — Browse any site's agent-facing structure from a sidebar
+- **Markdown extraction** — Convert any webpage to clean markdown, even without publisher support
+- **[Markdown Form Links](https://markdownformlinks.wilmake.com)** — Interactive forms using standard markdown link syntax
+- **Developer tools** — Token counts, response metadata, and spec-compliance checks
+
+## Links
+
+- [Blog: Introducing Markdown Browser](/BLOG.md): Why the markdown web needs a browser and what's next
+- [llms.txt](/llms.txt): Machine-readable site index
+- [GitHub](https://github.com/janwilmake/markdownbrowser): Source code
+`;
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -13,9 +33,26 @@ export default {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        },
+          "Access-Control-Allow-Headers": "Content-Type, Authorization"
+        }
       });
+    }
+
+    // Serve homepage
+    if (url.pathname === "/") {
+      const accept = request.headers.get("Accept") || "";
+      if (accept.includes("text/markdown")) {
+        return new Response(MARKDOWN_HOMEPAGE, {
+          headers: {
+            "Content-Type": "text/markdown; charset=utf-8",
+            "Access-Control-Allow-Origin": "*"
+          }
+        });
+      }
+      // Serve the HTML app
+      return env.ASSETS.fetch(
+        new Request(new URL("/main.html", request.url), request)
+      );
     }
 
     // Handle /fetch endpoint
@@ -26,6 +63,29 @@ export default {
         console.log({ targetUrl });
         if (!targetUrl) {
           return jsonResponse({ error: "Missing url parameter" }, 400);
+        }
+
+        // Use SELF binding for our own origin to avoid loopback 522
+        const targetParsed = new URL(targetUrl);
+        const isSelf =
+          targetParsed.hostname === "markdownbrowser.com" ||
+          targetParsed.hostname === "www.markdownbrowser.com";
+
+        if (isSelf) {
+          const selfRequest = new Request(targetUrl, {
+            headers: { Accept: "text/markdown, text/plain, */*" }
+          });
+          const response = await env.SELF.fetch(selfRequest);
+          const content = await response.text();
+          const contentType =
+            response.headers.get("content-type") || "text/plain";
+          return jsonResponse({
+            content,
+            contentType,
+            status: response.status,
+            ok: response.ok,
+            url: targetUrl
+          });
         }
 
         // Determine if we should use the extract service
@@ -52,6 +112,7 @@ export default {
 
         // Fallback: try without Accept header if first attempt failed
         if (!response.ok) {
+          console.log("not ok", response.status, await response.text());
           response = await fetch(targetUrl);
         }
 
@@ -68,7 +129,7 @@ export default {
             extractHeaders.set("Authorization", `Bearer ${apiKey}`);
 
             const extractResponse = await fetch(extractUrl, {
-              headers: extractHeaders,
+              headers: extractHeaders
             });
 
             if (extractResponse.ok) {
@@ -92,22 +153,22 @@ export default {
           contentType,
           status: response.status,
           ok: response.ok,
-          url: response.url,
+          url: response.url
         });
       } catch (error) {
         return jsonResponse(
           {
             error: error.message,
-            details: "Failed to fetch the requested URL",
+            details: "Failed to fetch the requested URL"
           },
           500
         );
       }
     }
 
-    // Return 404 for unknown endpoints
-    return new Response("Not Found", { status: 404 });
-  },
+    // Serve static assets for all other paths
+    return env.ASSETS.fetch(request);
+  }
 };
 
 /**
@@ -118,7 +179,7 @@ function jsonResponse(data, status = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-    },
+      "Access-Control-Allow-Origin": "*"
+    }
   });
 }

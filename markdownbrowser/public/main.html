@@ -794,10 +794,6 @@
             </div>
         </div>
         <div class="page-content" id="page-content">
-            <div class="markdown-content">
-                <h1>Welcome to Markdown Browser</h1>
-                <p>Enter a URL to get started</p>
-            </div>
         </div>
     </div>
 
@@ -946,7 +942,7 @@
         let state = storage.get();
         let currentTabIndex = 0;
 
-        const hardcodedHostnames = ["parallel.ai", "docs.tavus.io", "llmtext.com", "docs.cursor.com", "docs.perplexity.ai", "bun.com", "docs.x.com", "vuejs.org", "developers.cloudflare.com", "ast-grep.github.io", "community-charts.github.io", "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com", "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com", "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com", "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com", "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io", "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com", "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io", "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org", "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com", "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io", "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com", "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io", "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com", "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io", "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com", "docs.venice.ai", "docs.zep.us", "docs.wingbits.com", "docs.bugsplat.com", "docs.flip.to", "docs.craft.co", "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com", "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai", "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz", "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com", "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai", "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja", "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com", "docs.imprint.co"];
+        const hardcodedHostnames = ["llmtext.com", "cursor.com","bun.com/docs", "docs.x.com","googllm.com","parallel.ai", "docs.tavus.io",  "docs.perplexity.ai",  "vuejs.org", "developers.cloudflare.com", "ast-grep.github.io", "community-charts.github.io", "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com", "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com", "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com", "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com", "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io", "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com", "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io", "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org", "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com", "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io", "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com", "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io", "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com", "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io", "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com", "docs.venice.ai", "docs.zep.us", "docs.wingbits.com", "docs.bugsplat.com", "docs.flip.to", "docs.craft.co", "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com", "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai", "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz", "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com", "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai", "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja", "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com", "docs.imprint.co"];
 
         // Initialize
         function init() {
@@ -1369,6 +1365,19 @@
                 }
             } else if (tab.content) {
                 renderContent(tab.content, tab.url);
+            } else {
+                // Show welcome content for empty tabs
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = 'markdown-content welcome-content';
+                welcomeDiv.innerHTML = '<h1>Welcome to Markdown Browser</h1>' +
+                    '<p>See the web the way AI sees it. Enter a URL to get started.</p>' +
+                    '<p><a href="https://markdownbrowser.com/BLOG.md">Read the blog post: why does this need to exist?</a></p>';
+                welcomeDiv.querySelector('a').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadUrl('https://markdownbrowser.com/BLOG.md');
+                });
+                container.appendChild(welcomeDiv);
+                tabDivCache.set(currentTabIndex, welcomeDiv);
             }
 
             // Render sidebar

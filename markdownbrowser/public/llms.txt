@@ -1,0 +1,10 @@
+# Markdown Browser
+
+> A browser for the machine-readable web. Browse any website as clean markdown, navigate llms.txt sitemaps, and see the internet through the eyes of AI agents.
+
+Markdown Browser leverages the llms.txt standard to navigate websites. If no llms.txt is available, it uses extraction strategies to convert any webpage to markdown. Features include a sidebar for llms.txt navigation, markdown form links for interactivity, search and extract engines, and token/metadata inspection for debugging agent workflows.
+
+## Main
+
+- [Markdown Browser](https://markdownbrowser.com/): Home page — try the browser, search the markdown web, and explore agent-friendly sites
+- [Blog: Introducing Markdown Browser](https://markdownbrowser.com/BLOG.md): Why the markdown web needs a browser, core features, and the vision for an agent-friendly internet

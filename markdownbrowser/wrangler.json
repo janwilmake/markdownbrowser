@@ -2,7 +2,8 @@
   "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
   "name": "markdownbrowser",
   "main": "worker.js",
-  "assets": { "directory": "./public" },
+  "assets": { "directory": "./public", "binding": "ASSETS" },
+  "services": [{ "binding": "SELF", "service": "markdownbrowser" }],
   "routes": [
     { "custom_domain": true, "pattern": "markdownbrowser.com" },
     { "custom_domain": true, "pattern": "www.markdownbrowser.com" }
