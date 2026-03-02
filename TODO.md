@@ -4,7 +4,12 @@
 - ✅ Allow choosing the llms.txt source: `auto`, `crawl`, or `website`
 - ✅ When `auto`, use `crawl.llmtext.com/{domain}/llms.txt` as fallback to `llms.txt` not being found in markdownbrowser
 - ✅ Allow refreshing `llms.txt` at any time
-- Link to validate an llms.txt: https://llmtext.com/?validate={url}
+- Make styling more like chrome
+- Make navigation more simple, e.g. for https://simonwillison.net
+- search with navigation is ugly
+- Make refresh llms.txt not space so much
+- Remove select button
+- Add link to validate the llms.txt: https://llmtext.com/?validate={url}
 - Make it render markdown to html faster and in a web-worker; some more optimizations may be possible to make it fast
 - (cmd + click) -> new tab
 

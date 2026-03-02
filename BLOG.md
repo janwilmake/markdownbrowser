@@ -73,10 +73,26 @@ The extract engine is the engine that is used for turning a HTML page into markd
 
 The [llms.txt standard](https://llmstxt.org) is a simple format to create an overview of what is available on a website, and has many potential applications. So far, some developers have used it with their IDE and coding agents to fetch proper documentation context. With [llmtext mcp](https://github.com/janwilmake/LLMTEXT-mcp) a website with an llms.txt is also made available as MCP. With markdown browser, the llms.txt is used as a way to navigate the website for the user, allowing an easy way to navigate through the website top-down from a sidebar.
 
-**Shadow Sites**
+**Markdown Form Links**
 
-Most websites don't serve [Markdown](https://www.markdownguide.org) yet, and the extract engine can't always access the content needed. This is why markdownbrowser introduces the concept of shadow sites, allowing to replace a website with an agent-friendly one. When people visit a URL that is marked as having a shadow site, they get redirected to this shadow site such that they get the content they are looking for. We invite the open source community to create shadow-sites for all popular websites that don't do it themselves, so we can more easily transition to an agent-friendly internet.
+One thing that's missing from the markdown web is interactivity. Regular markdown links can navigate, but they can't accept input. [Markdown Form Links](https://markdownformlinks.wilmake.com) is a tiny [marked](https://marked.js.org) extension that solves this by turning links with `{variable}` placeholders into HTML forms. No new syntax — it's just a standard markdown link with blanks:
+
+```
+[Search](https://google.com/search?q={query*})
+```
+
+This renders as a form with a text input and a submit button. The extension supports type hints (`{email*:email}`), required fields (`{name*}`), default values (`{qty:number=1}`), and select dropdowns (`{size=S|M*|L|XL}`). In any markdown viewer that doesn't support the extension, it degrades gracefully into a readable link.
+
+The best example of this in practice is [GoogLLM](https://googllm.com), an agent-friendly Google search that returns clean markdown. Its entire search interface is a single markdown form link:
+
+```
+[Search](/{page=search|images|videos|places|news|shopping|scholar}/{query})
+```
+
+That one line gives you a dropdown to pick the search type and a text input for your query. In Markdown Browser, this renders as a usable search form. In a plain markdown viewer, it's still a perfectly readable link. This is what agent-friendly interactivity looks like — zero JavaScript required on the publisher's end, just markdown.
 
 ## Future work
 
-??
+**Shadow Sites**
+
+Most websites don't serve markdown yet, and the extract engine can't always access the content needed. A future direction for Markdown Browser is the concept of shadow sites — allowing a website to be replaced with an agent-friendly alternative. When people visit a URL that is marked as having a shadow site, they'd get redirected to this shadow site to get the content they're looking for. We invite the open source community to create shadow sites for popular websites that don't serve markdown themselves, so we can more easily transition to an agent-friendly internet.

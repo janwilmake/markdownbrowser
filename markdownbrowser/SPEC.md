@@ -48,7 +48,6 @@ type Config = {
     searchEngine: string; // default: "https://search.p0web.com/search/%s"
     extractEngine: string; //default: "https://llmtext.com/%s"
     homepage: string; // default: "https://markdownbrowser.com/homepage"
-    shadow: { [hostname: string]: string };
     apiKey: string;
   };
 };
@@ -59,7 +58,6 @@ ADDRESS BAR (and url loading)
 - if no protocol given, prepend https://.
 - also use a html datalist with all llmstxt hostnames from localstorage and also these hostnames, hardcoded: https://pastebin.contextarea.com/9B3pfv1V57HApHN.md
 - `config.searchEngine` is used when no hostname is entered in url
-- `config.shadow` object replaces hostnames with other hostnames in all urls
 - When fetching a url, use `/fetch?url=`
 - Every time a url is loaded, look up llmstxt parse from localStorage or fetch from `{origin}/llms.txt` and insert into localStorage
 
@@ -90,7 +88,6 @@ NAVIGATION SIDEBAR
 PAGE
 
 - Render info on how it was rendered
-  - used shadow hostname?
   - used extract api?
   - how many tokens?
   - speed
@@ -99,7 +96,7 @@ PAGE
 - Ensure to use a proper markdown renderer like marked and also nicely render codeblocks and tables etc. ensure images/videos/etc are rendered with a max size, and ensure there's appropriate spacing everywhere.
 - Links should always open in current tab and have a right click contextmenu that would open it in a new tab
 - render images elegantly, with a max width of 50% of the screen
-- custom syntax for links: links that contain variables as `{variableName}` should be rendered as text forms where each variable is a text input and the link text is the submit button.
+- custom syntax for links: uses [markdown-form-links](https://markdownformlinks.wilmake.com) extension for marked — links with `{variable}` placeholders become `<form>` elements with typed inputs, required fields, defaults, and select dropdowns.
 
 EXTRA
 

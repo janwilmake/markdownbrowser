@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Browser</title>
     <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <script src="https://markdownformlinks.wilmake.com/mod.js"></script>
     <style>
         * {
             margin: 0;
@@ -575,10 +576,11 @@
             border: none;
         }
 
-        .link-form {
-            display: inline-flex;
+        .markdown-content form {
+            display: flex;
+            flex-wrap: wrap;
             gap: 8px;
-            align-items: center;
+            align-items: flex-end;
             background: var(--bg-secondary);
             padding: 12px 16px;
             border-radius: 8px;
@@ -586,7 +588,14 @@
             border: 1px solid var(--border-color);
         }
 
-        .link-form input {
+        .markdown-content form label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .markdown-content form input,
+        .markdown-content form select {
             padding: 6px 12px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
@@ -595,7 +604,7 @@
             font-size: 14px;
         }
 
-        .link-form button {
+        .markdown-content form button {
             padding: 6px 16px;
             background: var(--accent-color);
             color: white;
@@ -606,7 +615,7 @@
             font-weight: 500;
         }
 
-        .link-form button:hover {
+        .markdown-content form button:hover {
             background: var(--accent-hover);
         }
 
@@ -800,10 +809,6 @@
                 <input type="text" id="config-extract" placeholder="https://llmtext.com/%s">
             </div>
             <div class="config-field">
-                <label for="config-shadow">Shadow Hostnames (JSON: {"old.com": "new.com"})</label>
-                <textarea id="config-shadow">{}</textarea>
-            </div>
-            <div class="config-field">
                 <label for="config-apikey">API Key (for search and extract)</label>
                 <input type="password" id="config-apikey" placeholder="Enter API key">
             </div>
@@ -923,7 +928,6 @@
                     config: {
                         search: 'https://search.p0web.com/search/%s',
                         extract: 'https://llmtext.com/%s',
-                        shadow: {},
                         apiKey: '',
                         llmstxtDefault: 'auto'
                     }
@@ -1061,9 +1065,6 @@
                 url = 'https://' + url;
             }
 
-            // Apply shadow hostnames
-            url = applyShadowHostname(url);
-
             tab.url = url;
             document.getElementById('url-input').value = url;
 
@@ -1120,17 +1121,6 @@
           </div>
         `;
             }
-        }
-
-        function applyShadowHostname(url) {
-            try {
-                const urlObj = new URL(url);
-                if (state.config.shadow[urlObj.hostname]) {
-                    urlObj.hostname = state.config.shadow[urlObj.hostname];
-                    return urlObj.toString();
-                }
-            } catch { }
-            return url;
         }
 
         async function fetchLlmsTxt(url, forceRefresh = false) {
@@ -1287,11 +1277,15 @@
                 }
             }
 
-            // Render markdown
+            // Render markdown (markedFormLinks handles {var} link→form conversion)
+            const ext = markedFormLinks();
+            const origRenderer = ext.extensions[0].renderer;
+            ext.extensions[0].renderer = function(token) {
+                // Inject data-href with original template URL so we can do {var} replacement on submit
+                return origRenderer(token).replace('<form ', '<form data-href="' + token.href.replace(/&/g,'&amp;').replace(/"/g,'&quot;') + '" ');
+            };
+            marked.use(ext);
             html += marked.parse(content);
-
-            // Process custom links
-            html = processCustomLinks(html, baseUrl);
 
             const container = document.getElementById('page-content');
             container.innerHTML = `<div class="markdown-content">${html}</div>`;
@@ -1316,6 +1310,25 @@
                     createNewTab(href);
                     switchTab(state.tabs.length - 1);
                     loadUrl(href);
+                });
+            });
+
+            // Handle form submissions from markedFormLinks
+            container.querySelectorAll('form[data-href]').forEach(form => {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    let url = form.dataset.href;
+                    // Replace each {var} placeholder with the input value
+                    url = url.replace(/\{([^}]+)\}/g, (match, expr) => {
+                        // Extract just the name (strip *, :type, =default)
+                        let name = expr.split('=')[0].split(':')[0].replace('*', '');
+                        const input = form.elements[name];
+                        return input ? encodeURIComponent(input.value) : match;
+                    });
+                    if (baseUrl && !url.startsWith('http')) {
+                        url = resolveUrl(url, baseUrl);
+                    }
+                    loadUrl(url);
                 });
             });
 
@@ -1366,38 +1379,6 @@
             });
         }
 
-        function processCustomLinks(html, baseUrl) {
-            return html.replace(/<a href="([^"]*\{[^}]+\}[^"]*)"[^>]*>([^<]+)<\/a>/g, (match, href, text) => {
-                const variables = [...href.matchAll(/\{([^}]+)\}/g)].map(m => m[1]);
-                if (variables.length === 0) return match;
-
-                let form = '<form class="link-form" onsubmit="return false;">';
-                variables.forEach(varName => {
-                    form += `<input type="text" placeholder="${escapeHtml(varName)}" data-var="${escapeHtml(varName)}">`;
-                });
-                form += `<button onclick="submitLinkForm(this, '${escapeHtml(href)}', '${baseUrl || ''}')">${escapeHtml(text)}</button>`;
-                form += '</form>';
-                return form;
-            });
-        }
-
-        window.submitLinkForm = function (button, template, baseUrl) {
-            const form = button.closest('.link-form');
-            const inputs = form.querySelectorAll('input');
-            let url = template;
-
-            inputs.forEach(input => {
-                const varName = input.dataset.var;
-                const value = input.value;
-                url = url.replace(`{${varName}}`, encodeURIComponent(value));
-            });
-
-            if (baseUrl && !url.startsWith('http')) {
-                url = resolveUrl(url, baseUrl);
-            }
-
-            loadUrl(url);
-        };
 
         function renderSidebar(url) {
             const sidebarContent = document.getElementById('sidebar-content');
@@ -1588,7 +1569,6 @@
         document.getElementById('config-btn').addEventListener('click', () => {
             document.getElementById('config-search').value = state.config?.search;
             document.getElementById('config-extract').value = state.config?.extract;
-            document.getElementById('config-shadow').value = JSON.stringify(state.config?.shadow, null, 2);
             document.getElementById('config-apikey').value = state.config?.apiKey;
             document.getElementById('config-llmstxt-default').value = state.config?.llmstxtDefault || 'auto';
             document.getElementById('config-modal').classList.add('visible');
@@ -1602,14 +1582,13 @@
             try {
                 state.config.search = document.getElementById('config-search').value;
                 state.config.extract = document.getElementById('config-extract').value;
-                state.config.shadow = JSON.parse(document.getElementById('config-shadow').value);
                 state.config.apiKey = document.getElementById('config-apikey').value;
                 state.config.llmstxtDefault = document.getElementById('config-llmstxt-default').value;
                 storage.save(state);
                 document.getElementById('config-modal').classList.remove('visible');
                 updateHostnameList();
             } catch (error) {
-                alert('Invalid JSON in shadow hostnames: ' + error.message);
+                alert('Error saving config: ' + error.message);
             }
         });
 
