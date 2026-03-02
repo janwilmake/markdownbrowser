@@ -18,11 +18,11 @@ Markdown strips all that away. It's the semantic essence of a page — just the 
 
 Sites are starting to publish `/llms.txt` files — structured sitemaps designed specifically for AI consumption. It's a simple format that creates an overview of what's available on a website, and it's gaining traction among developers who want their documentation to be agent-accessible.
 
-But until now, there's been no good way to *browse* that ecosystem as a human. Markdown Browser makes llms.txt navigable — you get a sidebar with sections and links, like a developer portal for the machine-readable web. You can explore a site's entire agent-facing structure top-down, see what's exposed, and spot what's missing.
+But until now, there's been no good way to _browse_ that ecosystem as a human. Markdown Browser makes llms.txt navigable — you get a sidebar with sections and links, like a developer portal for the machine-readable web. You can explore a site's entire agent-facing structure top-down, see what's exposed, and spot what's missing.
 
 ### 3. Developers Building AI Tools Need to Debug What Their Agents See
 
-If you're building an agent that fetches web content, you've probably wrestled with scraping. It's fragile, expensive, and breaks whenever a site redesigns. Worse, you often can't tell *why* your agent is confused by a page without manually inspecting the markdown it received.
+If you're building an agent that fetches web content, you've probably wrestled with scraping. It's fragile, expensive, and breaks whenever a site redesigns. Worse, you often can't tell _why_ your agent is confused by a page without manually inspecting the markdown it received.
 
 Markdown Browser surfaces the metadata that matters: Was an extract API used? How many tokens did the page cost? How fast was the response? Is the content actually spec-compliant and functional, or is it garbled in a way that would trip up an agent? This is the devtools panel for the agent-browsable web.
 
@@ -30,7 +30,7 @@ Markdown Browser surfaces the metadata that matters: Was an extract API used? Ho
 
 This one surprised us too. Once you start browsing in markdown, it's hard to go back for content-heavy pages. No popups. No layout shift. No cookie consent dialogs. No autoplaying videos. No "subscribe to our newsletter" modals. Just text, links, images, and code blocks — cleanly rendered.
 
-It's like reader mode on steroids. And unlike browser reader modes that try to heuristically extract content from HTML (and often fail), the markdown web is *designed* to be read this way. If a site publishes good markdown, the reading experience is genuinely superior.
+It's like reader mode on steroids. And unlike browser reader modes that try to heuristically extract content from HTML (and often fail), the markdown web is _designed_ to be read this way. If a site publishes good markdown, the reading experience is genuinely superior.
 
 ### The Bigger Picture
 
@@ -48,15 +48,10 @@ I'm introducing Markdown Browser as a developer tool with the following goals:
 - See if the markdown version of a website is spec-compliant and functional, or if it isn't usable for AI.
 - Get a feel for if the agent ever gets stuck or is limited in a way compared to the html-internet
 
-I also aim to build in the following features
-
-- MCP-compliant OAuth to access private info
-- Potential use within MCP: context-ingestion UI
-
 The following are non-goals, or goals that I decided not to focus on at this stage:
 
 - Ability to edit content you have the rights to.
-- Login into the browser, store browsing history in personal DO, get insights.
+- Login into the browser, store browsing history in personal storage, get insights.
 - A way (and possibly, standard) for people to download new content from websites they're interested in, taking it fully offline.
 
 ## Core Elements
@@ -83,7 +78,7 @@ One thing that's missing from the markdown web is interactivity. Regular markdow
 [Search](https://google.com/search?q={query*})
 ```
 
-This renders as a form with a text input and a submit button. The extension supports type hints (`{email*:email}`), required fields (`{name*}`), default values (`{qty:number=1}`), and select dropdowns (`{size=S|M*|L|XL}`). In any markdown viewer that doesn't support the extension, it degrades gracefully into a readable link.
+This renders as a form with a text input and a submit button. The extension supports type hints (`{email:email}`), required fields (`{name*}`), default values (`{qty:number=1}`), and select dropdowns (`{size=S|M|L|XL}`). In any markdown viewer that doesn't support the extension, it degrades gracefully into a readable link.
 
 The best example of this in practice is [GoogLLM](https://googllm.com), an agent-friendly Google search that returns clean markdown. Its entire search interface is a single markdown form link:
 
