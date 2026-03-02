@@ -99,15 +99,30 @@ class CustomWKWebView: WKWebView {
 
 struct WebView: NSViewRepresentable {
     let url: URL
-    
-    func makeNSView(context: Context) -> WKWebView {
-        return CustomWKWebView()
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
     }
-    
+
+    func makeNSView(context: Context) -> WKWebView {
+        let webView = CustomWKWebView()
+        webView.uiDelegate = context.coordinator
+        return webView
+    }
+
     func updateNSView(_ webView: WKWebView, context: Context) {
         if webView.url != url {
             let request = URLRequest(url: url)
             webView.load(request)
+        }
+    }
+
+    class Coordinator: NSObject, WKUIDelegate {
+        func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+            if let url = navigationAction.request.url {
+                NSWorkspace.shared.open(url)
+            }
+            return nil
         }
     }
 }

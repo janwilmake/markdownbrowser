@@ -5,24 +5,24 @@
 - ✅ When `auto`, use `crawl.llmtext.com/{domain}/llms.txt` as fallback to `llms.txt` not being found in markdownbrowser
 - ✅ Allow refreshing `llms.txt` at any time
 
-# ✅ Make it more pretty
+# Make it more pretty
 
-- simplify the navigation to just be one level deep for the ## in llms.txt, do not nest it with the urls
-- Make styling more like safari. among other things, less rounded, and the tabs should span the full width available
-- When clicking the refresh button of llms.txt it space out weirdly. make it a simple spin animation without resize
-- Remove select button from menu to select auto/web/crawl (this should come from the settings and that should be enough)
-- Make it render markdown to html faster and in a web-worker; some more optimizations may be possible to make it fast. When switching tabs, the html should be
+- ✅ simplify the navigation to just be one level deep for the ## in llms.txt, do not nest it with the urls
+- ✅ Make styling more like safari. among other things, less rounded, and the tabs should span the full width available
+- ✅ When clicking the refresh button of llms.txt it space out weirdly. make it a simple spin animation without resize
+- ✅ Remove select button from menu to select auto/web/crawl (this should come from the settings and that should be enough)
+- ✅ Make it render markdown to html faster and in a web-worker; some more optimizations may be possible to make it fast. When switching tabs, the html should be
   saved so it renders fast. maybe the div can just be hidden instead of removed when swithcin tabs. as long as it's fast
-- Cmd+click a url should open it in a new tab
+- ✅ Cmd+click a url should open it in a new tab
+- ✅ Add devtools statusbar
+
+# TODO
 
 - Add link to validate the llms.txt: https://llmtext.com/?validate={url}
 
 # PITCH IT
 
 - write blog about it
-- make video about it
-- next monday pitch it (and pitch original job title)
-- 2600 git stars earned
 
 # Later
 

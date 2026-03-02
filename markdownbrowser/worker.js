@@ -84,7 +84,8 @@ export default {
             contentType,
             status: response.status,
             ok: response.ok,
-            url: targetUrl
+            url: targetUrl,
+            source: "native"
           });
         }
 
@@ -96,6 +97,7 @@ export default {
             : false;
 
         let fetchUrl = targetUrl;
+        let extracted = false;
         const headers = new Headers();
 
         // Use extract service for HTML content if apiKey is available
@@ -134,6 +136,7 @@ export default {
 
             if (extractResponse.ok) {
               response = extractResponse;
+              extracted = true;
             } else {
               throw new Error(
                 "Extract failed: " + extractUrl + "; " + extractResponse.status
@@ -153,7 +156,8 @@ export default {
           contentType,
           status: response.status,
           ok: response.ok,
-          url: response.url
+          url: response.url,
+          source: extracted ? "extracted" : "native"
         });
       } catch (error) {
         return jsonResponse(

@@ -756,6 +756,55 @@
                 font-size: 1.25em;
             }
         }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 2px 12px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            height: 24px;
+            overflow: hidden;
+        }
+
+        .status-bar-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .status-bar-label {
+            opacity: 0.7;
+        }
+
+        .status-bar-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .status-bar-spacer {
+            flex: 1;
+        }
+
+        .status-bar-button {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        .status-bar-button:hover {
+            background: var(--bg-tertiary);
+        }
     </style>
 </head>
 
@@ -795,6 +844,24 @@
         </div>
         <div class="page-content" id="page-content">
         </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="status-bar">
+        <span class="status-bar-item">
+            <span class="status-bar-label">Source:</span>
+            <span class="status-bar-value" id="status-source">-</span>
+        </span>
+        <span class="status-bar-item">
+            <span class="status-bar-label">Load:</span>
+            <span class="status-bar-value" id="status-load-time">-</span>
+        </span>
+        <span class="status-bar-item">
+            <span class="status-bar-label">llms.txt:</span>
+            <span class="status-bar-value" id="status-llmstxt">-</span>
+        </span>
+        <span class="status-bar-spacer"></span>
+        <button class="status-bar-button" id="status-open-browser" title="Open in regular browser">Open in Browser ↗</button>
     </div>
 
     <!-- Config Modal -->
@@ -942,7 +1009,8 @@
         let state = storage.get();
         let currentTabIndex = 0;
 
-        const hardcodedHostnames = ["llmtext.com", "cursor.com","bun.com/docs", "docs.x.com","googllm.com","parallel.ai", "docs.tavus.io",  "docs.perplexity.ai",  "vuejs.org", "developers.cloudflare.com", "ast-grep.github.io", "community-charts.github.io", "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com", "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com", "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com", "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com", "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io", "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com", "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io", "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org", "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com", "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io", "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com", "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io", "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com", "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io", "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com", "docs.venice.ai", "docs.zep.us", "docs.wingbits.com", "docs.bugsplat.com", "docs.flip.to", "docs.craft.co", "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com", "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai", "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz", "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com", "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai", "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja", "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com", "docs.imprint.co"];
+        const hardcodedHostnames = ["llmtext.com", "cursor.com/docs","bun.com/docs", "docs.x.com","googllm.com", "parallel.ai", "boristane.com",  "simonwilison.net", "docs.perplexity.ai",  "blog.cloudflare.com", "developers.cloudflare.com" ];
+        //"ast-grep.github.io", "community-charts.github.io", "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com", "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com", "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com", "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com", "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io", "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com", "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io", "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org", "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com", "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io", "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com", "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io", "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com", "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io", "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com", "docs.venice.ai", "docs.zep.us", "docs.wingbits.com", "docs.bugsplat.com", "docs.flip.to", "docs.craft.co", "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com", "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai", "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz", "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com", "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai", "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja", "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com", "docs.imprint.co"
 
         // Initialize
         function init() {
@@ -1129,6 +1197,7 @@
 
             // Show spinner in tab favicon
             setTabLoading(currentTabIndex, true);
+            const loadStart = performance.now();
 
             try {
                 // Fetch llms.txt
@@ -1148,12 +1217,15 @@
                     });
 
                     const data = await response.json();
+                    const loadTime = Math.round(performance.now() - loadStart);
 
                     if (data.error) {
                         throw new Error(data.error);
                     }
 
                     tab.content = data.content;
+                    tab.contentSource = data.source || 'unknown';
+                    tab.loadTime = loadTime;
 
                     // Parse title and description
                     const parsed = parseMarkdown(data.content);
@@ -1170,6 +1242,7 @@
                     storage.save(state);
                     renderCurrentTab();
                     renderTabs();
+                    updateStatusBar();
 
                 } catch (error) {
                     document.getElementById('page-content').innerHTML = `
@@ -1380,8 +1453,9 @@
                 tabDivCache.set(currentTabIndex, welcomeDiv);
             }
 
-            // Render sidebar
+            // Render sidebar and status bar
             renderSidebar(tab.url);
+            updateStatusBar();
         }
 
         function setupContentHandlers(container, baseUrl) {
@@ -1592,6 +1666,35 @@
             header.classList.toggle('collapsed');
         };
 
+        function updateStatusBar() {
+            const tab = state.tabs[currentTabIndex];
+            document.getElementById('status-source').textContent = tab.contentSource || '-';
+            document.getElementById('status-load-time').textContent = tab.loadTime ? tab.loadTime + ' ms' : '-';
+
+            // Determine llms.txt source
+            let llmstxtStatus = '-';
+            if (tab.url) {
+                try {
+                    const hostname = new URL(tab.url).hostname;
+                    const source = tab.llmstxtSource || state.config.llmstxtDefault || 'auto';
+                    const llmstxt = state.llmstxt[hostname]?.[source];
+                    if (llmstxt) {
+                        llmstxtStatus = llmstxt.source || source;
+                    } else {
+                        llmstxtStatus = 'none';
+                    }
+                } catch {}
+            }
+            document.getElementById('status-llmstxt').textContent = llmstxtStatus;
+        }
+
+        document.getElementById('status-open-browser').addEventListener('click', () => {
+            const tab = state.tabs[currentTabIndex];
+            if (tab.url) {
+                window.open(tab.url, '_blank');
+            }
+        });
+
         function updateHostnameList() {
             const datalist = document.getElementById('hostname-list');
             const hostnames = [...new Set([...Object.keys(state.llmstxt), ...hardcodedHostnames])];
@@ -1651,6 +1754,8 @@
             createNewTab();
             renderTabs();
             renderCurrentTab();
+            document.getElementById('url-input').focus();
+            document.getElementById('url-input').select();
         });
 
         document.getElementById('config-btn').addEventListener('click', () => {
@@ -1733,6 +1838,8 @@
                     createNewTab();
                     renderTabs();
                     renderCurrentTab();
+                    document.getElementById('url-input').focus();
+                    document.getElementById('url-input').select();
                 } else if (e.key === 'w') {
                     e.preventDefault();
                     if (state.tabs.length > 1) {
@@ -1746,6 +1853,8 @@
                     createNewTab();
                     renderTabs();
                     renderCurrentTab();
+                    document.getElementById('url-input').focus();
+                    document.getElementById('url-input').select();
                 } else if (e.key === 'l') {
                     e.preventDefault();
                     document.getElementById('url-input').select();
