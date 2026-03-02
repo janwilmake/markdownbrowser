@@ -11,11 +11,11 @@ Goal: Developer Tool for the transition to the Agent-Friendly Web
 - Educate on the agent-friendliness of any website.
 - See if the markdown version of a website is spec-compliant and functional, or if it isn't usable for AI.
 - Get a feel for if the agent ever gets stuck or is limited in a way compared to the html-internet
+
+Non-goals: Everyday use or MCP integration
+
 - MCP-compliant OAuth to access private info
 - Potential use within MCP: context-ingestion UI
-
-Non-goals: Everyday use
-
 - Ability to edit content you have the rights to.
 - Login into the browser, store browsing history in personal DO, get insights.
 - A way (and possibly, standard) for people to download new content from websites they're interested in, taking it fully offline.
