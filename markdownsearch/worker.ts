@@ -32,11 +32,11 @@ const handler = async (
     return new Response(
       JSON.stringify({
         error: "Invalid path. Use /search/{query}",
-        example: "/search/what is the GDP of France in 2023?",
+        example: "/search/what is the GDP of France in 2023?"
       }),
       {
         status: 400,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" }
       }
     );
   }
@@ -54,7 +54,7 @@ const handler = async (
     const domain = siteMatch[1];
     objective = siteMatch[2];
     sourcePolicy = {
-      include_domains: [domain],
+      include_domains: [domain]
     };
   } else {
     objective = rawQuery;
@@ -66,7 +66,7 @@ const handler = async (
     processor: "base", // Fast processor for speed
     max_results: 10,
     max_chars_per_result: 500, // Smaller excerpts for speed
-    ...(sourcePolicy && { source_policy: sourcePolicy }),
+    ...(sourcePolicy && { source_policy: sourcePolicy })
   };
 
   try {
@@ -76,9 +76,9 @@ const handler = async (
       headers: {
         "Content-Type": "application/json",
         "x-api-key": ctx.accessToken, // SimplerAuth provides this
-        "parallel-beta": "search-extract-2025-10-10",
+        "parallel-beta": "search-extract-2025-10-10"
       },
-      body: JSON.stringify(searchRequest),
+      body: JSON.stringify(searchRequest)
     });
 
     if (!response.ok) {
@@ -87,11 +87,11 @@ const handler = async (
         JSON.stringify({
           error: "Search API error",
           status: response.status,
-          details: errorText,
+          details: errorText
         }),
         {
           status: response.status,
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" }
         }
       );
     }
@@ -105,18 +105,18 @@ const handler = async (
       status: 200,
       headers: {
         "Content-Type": "text/markdown",
-        "Cache-Control": "public, max-age=300", // Cache for 5 minutes
-      },
+        "Cache-Control": "public, max-age=300" // Cache for 5 minutes
+      }
     });
   } catch (error) {
     return new Response(
       JSON.stringify({
         error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
+        message: error instanceof Error ? error.message : "Unknown error"
       }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" }
       }
     );
   }
@@ -164,6 +164,6 @@ export default {
     isLoginRequired: false,
     oauthProviderPathPrefix: "/getKeys",
     oauthProviderHost: "platform.parallel.ai",
-    scope: "key:read",
-  }),
+    scope: "key:read"
+  })
 };

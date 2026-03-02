@@ -1,3 +1,5 @@
+[HN thread](https://news.ycombinator.com/item?id=47218389) | [X thread](https://x.com/janwilmake/status/2028488850692059383)
+
 In the last few years we've seen dozens of startups building Agents that can automate browsing the web that was made for humans. But the internet is going to be used by agents 1000x more than humans soon. So shouldn't we have a markdown internet as the primary internet that is used automatically by agents, and create browsers that 'make it manual' for humans?
 
 https://markdownbrowser.com does just that. It's a browser that leverages the [llms.txt standard](https://llmstxt.org) to navigate each website.

@@ -21,7 +21,10 @@
 # PITCH IT
 
 - ✅ review the blogpost
-- evening: create thread, push to X + HN
+- ✅ create thread
+- oss the repo
+- publish thread on X
+- publish website on HN
 
 # Later
 
