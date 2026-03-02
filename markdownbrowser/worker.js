@@ -143,7 +143,9 @@ export default {
               );
             }
           } else {
-            throw new Error("Got HTML. Can only do this with Parallel apiKey");
+            throw new Error(
+              "Got HTML. Can only do this with extract engine set up. Please provide an API key in settings. You can get a Parallel API key (the default extract engine) at https://platform.parallel.ai/settings?tab=api-keys"
+            );
           }
         }
 
