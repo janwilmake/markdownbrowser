@@ -22,7 +22,7 @@ WORKER
 
 LAY-OUT:
 
-- Style: use same look/feel as safari, but done purely in html, css, vanilla js
+- Style: use same look/feel as safari, but done purely in html, css, vanilla js. Minimal border-radius (4px). Tabs span full width with no gaps, separated by borders.
 - Mobile friendly
 - The address bar up top with back/next/refresh/toggle-menu icons, then address/search bar, then config icon on the right.
 - Tabs below
@@ -79,9 +79,10 @@ NAVIGATION SIDEBAR
 - Render it using the llms.txt parse
 - The llms.txt can be parsed using this script that you can inline https://pastebin.contextarea.com/Oxc7VP7uscjFKm8.md
 - If there is no llms.txt for the hostname, render error.
-- Ensure to allow expanding/collapsing the menu using the sections By default, expand all.
-- Add nested sections for the pathname that leads to the filename with small indentation
+- Ensure to allow expanding/collapsing the menu using the sections. By default, expand all.
+- Navigation is one level deep: flat list of links per `##` section. No nested URL path tree.
 - Do not render the description for each item, only as tooltip.
+- The llms.txt source (auto/website/crawl) is configured only in Settings, not in the sidebar.
 - A searchbar to filter on the items in the navigation
 - Search in navigation should open all expands
 
@@ -94,7 +95,7 @@ PAGE
 - Render frontmatter (as a table)
 - When fetching a url, use `/fetch?url=`. Ensure to prepend origin from the current url if url was relative.
 - Ensure to use a proper markdown renderer like marked and also nicely render codeblocks and tables etc. ensure images/videos/etc are rendered with a max size, and ensure there's appropriate spacing everywhere.
-- Links should always open in current tab and have a right click contextmenu that would open it in a new tab
+- Links should open in current tab by default. Right-click or Cmd/Ctrl+click opens in a new tab.
 - render images elegantly, with a max width of 50% of the screen
 - custom syntax for links: uses [markdown-form-links](https://markdownformlinks.wilmake.com) extension for marked — links with `{variable}` placeholders become `<form>` elements with typed inputs, required fields, defaults, and select dropdowns.
 
@@ -126,7 +127,7 @@ TO BE ITERATED
 - INDEX.HTML
 
   - History behavior isn't working correctly
-  - Somehow render markdown faster (maybe cache its innerhtml as well rather than having to do marked each time?)
+  - Markdown is parsed in a web worker (off main thread). Rendered tab divs are cached and hidden/shown on tab switch instead of re-rendered.
 
 - WORKER
 

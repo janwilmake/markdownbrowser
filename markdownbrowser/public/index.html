@@ -65,7 +65,7 @@
             border: none;
             background: transparent;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,7 +92,7 @@
             width: 100%;
             padding: 8px 12px;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 4px;
             background: var(--bg-primary);
             color: var(--text-primary);
             font-size: 14px;
@@ -106,8 +106,8 @@
         /* Tabs */
         .tabs-container {
             display: flex;
-            gap: 4px;
-            padding: 4px 12px;
+            gap: 0;
+            padding: 0;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border-color);
             overflow-x: auto;
@@ -120,12 +120,14 @@
             gap: 8px;
             padding: 6px 12px;
             background: var(--bg-tertiary);
-            border-radius: 6px;
+            border-radius: 0;
+            border-right: 1px solid var(--border-color);
             cursor: pointer;
             font-size: 13px;
             white-space: nowrap;
-            min-width: 120px;
-            max-width: 200px;
+            flex: 1;
+            min-width: 0;
+            max-width: 240px;
         }
 
         .tab.active {
@@ -136,6 +138,16 @@
             width: 16px;
             height: 16px;
             flex-shrink: 0;
+        }
+
+        .tab-spinner {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--text-secondary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         .tab-title {
@@ -163,9 +175,11 @@
             padding: 6px 12px;
             background: transparent;
             border: none;
+            border-right: 1px solid var(--border-color);
             cursor: pointer;
             font-size: 18px;
             color: var(--text-primary);
+            flex-shrink: 0;
         }
 
         /* Main Content */
@@ -198,32 +212,34 @@
             gap: 8px;
         }
 
-        .llmstxt-source {
-            flex: 1;
-            padding: 4px 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-size: 12px;
-        }
-
         .refresh-llmstxt {
             width: 24px;
             height: 24px;
+            min-width: 24px;
+            min-height: 24px;
             border: none;
-            background: transparent;
+            background: none;
             cursor: pointer;
-            border-radius: 4px;
-            display: flex;
+            border-radius: 0;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-primary);
+            color: var(--text-secondary);
             font-size: 14px;
+            flex-shrink: 0;
+            padding: 0;
+            outline: none;
+            -webkit-appearance: none;
         }
 
         .refresh-llmstxt:hover {
-            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .refresh-llmstxt:active,
+        .refresh-llmstxt:focus {
+            background: none;
+            outline: none;
         }
 
         .refresh-llmstxt.loading {
@@ -430,7 +446,7 @@
             padding: 1em 1.5em;
             border-left: 4px solid var(--accent-color);
             background: var(--bg-secondary);
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 4px 4px 0;
         }
 
         .markdown-content blockquote p {
@@ -449,7 +465,7 @@
         .markdown-content img {
             max-width: 100%;
             height: auto;
-            border-radius: 12px;
+            border-radius: 4px;
             margin: 2em 0;
             display: block;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -458,7 +474,7 @@
         .markdown-content video {
             max-width: 100%;
             height: auto;
-            border-radius: 12px;
+            border-radius: 4px;
             margin: 2em 0;
             display: block;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -466,7 +482,7 @@
 
         .markdown-content iframe {
             max-width: 100%;
-            border-radius: 12px;
+            border-radius: 4px;
             margin: 2em 0;
             display: block;
             border: 1px solid var(--border-color);
@@ -477,7 +493,7 @@
             width: 100%;
             border-collapse: collapse;
             margin: 2em 0;
-            border-radius: 8px;
+            border-radius: 4px;
             overflow: hidden;
             border: 1px solid var(--border-color);
         }
@@ -509,7 +525,7 @@
         .markdown-content pre {
             background: var(--bg-secondary);
             padding: 1.5em;
-            border-radius: 12px;
+            border-radius: 4px;
             overflow-x: auto;
             margin: 2em 0;
             border: 1px solid var(--border-color);
@@ -544,7 +560,7 @@
         .frontmatter {
             background: var(--bg-secondary);
             padding: 1.5em;
-            border-radius: 12px;
+            border-radius: 4px;
             margin-bottom: 3em;
             border: 1px solid var(--border-color);
         }
@@ -639,7 +655,7 @@
 
         .modal {
             background: var(--bg-primary);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 24px;
             max-width: 500px;
             width: 90%;
@@ -714,13 +730,6 @@
             background: var(--bg-tertiary);
         }
 
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 48px;
-            color: var(--text-secondary);
-        }
-
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -774,11 +783,7 @@
     <div class="main-content">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <select class="llmstxt-source" id="llmstxt-source">
-                    <option value="auto">Auto (fallback to crawl)</option>
-                    <option value="website">Website only</option>
-                    <option value="crawl">Crawl only</option>
-                </select>
+                <span style="flex:1;font-size:12px;font-weight:600;color:var(--text-secondary)">Navigation</span>
                 <button class="refresh-llmstxt" id="refresh-llmstxt" title="Refresh llms.txt">⟳</button>
             </div>
             <div class="sidebar-search">
@@ -963,8 +968,6 @@
                 document.getElementById('sidebar').classList.add('hidden');
             }
 
-            // Restore llms.txt source preference
-            document.getElementById('llmstxt-source').value = state.config.llmstxtDefault || 'auto';
         }
 
         // Tabs Management
@@ -987,6 +990,30 @@
 
         function closeTab(index) {
             if (state.tabs.length === 1) return;
+            // Clean up cached div
+            if (tabDivCache.has(index)) {
+                const div = tabDivCache.get(index);
+                if (div.parentNode) div.parentNode.removeChild(div);
+                tabDivCache.delete(index);
+            }
+            // Reindex cached divs above the removed index
+            const newCache = new Map();
+            for (const [idx, div] of tabDivCache) {
+                if (idx > index) newCache.set(idx - 1, div);
+                else newCache.set(idx, div);
+            }
+            tabDivCache.clear();
+            for (const [k, v] of newCache) tabDivCache.set(k, v);
+
+            // Reindex loading state
+            tabLoadingState.delete(index);
+            const newLoading = new Set();
+            for (const idx of tabLoadingState) {
+                newLoading.add(idx > index ? idx - 1 : idx);
+            }
+            tabLoadingState.clear();
+            for (const idx of newLoading) tabLoadingState.add(idx);
+
             state.tabs.splice(index, 1);
             if (currentTabIndex >= state.tabs.length) {
                 currentTabIndex = state.tabs.length - 1;
@@ -1011,10 +1038,16 @@
                 const tabEl = document.createElement('div');
                 tabEl.className = `tab ${index === currentTabIndex ? 'active' : ''}`;
 
-                const favicon = document.createElement('img');
-                favicon.className = 'tab-favicon';
-                favicon.src = getFavicon(tab.url);
-                favicon.onerror = () => favicon.style.display = 'none';
+                let favicon;
+                if (tabLoadingState.has(index)) {
+                    favicon = document.createElement('div');
+                    favicon.className = 'tab-spinner';
+                } else {
+                    favicon = document.createElement('img');
+                    favicon.className = 'tab-favicon';
+                    favicon.src = getFavicon(tab.url);
+                    favicon.onerror = () => favicon.style.display = 'none';
+                }
 
                 const title = document.createElement('span');
                 title.className = 'tab-title';
@@ -1036,6 +1069,36 @@
 
                 container.insertBefore(tabEl, document.getElementById('new-tab-btn'));
             });
+        }
+
+        // Track loading state per tab
+        const tabLoadingState = new Set();
+
+        function setTabLoading(index, loading) {
+            if (loading) {
+                tabLoadingState.add(index);
+            } else {
+                tabLoadingState.delete(index);
+            }
+            // Update the favicon/spinner in the tab element
+            const container = document.getElementById('tabs-container');
+            const tabs = container.querySelectorAll('.tab');
+            if (tabs[index]) {
+                const existing = tabs[index].querySelector('.tab-favicon, .tab-spinner');
+                if (existing) {
+                    if (loading) {
+                        const spinner = document.createElement('div');
+                        spinner.className = 'tab-spinner';
+                        existing.replaceWith(spinner);
+                    } else {
+                        const favicon = document.createElement('img');
+                        favicon.className = 'tab-favicon';
+                        favicon.src = getFavicon(state.tabs[index]?.url);
+                        favicon.onerror = () => favicon.style.display = 'none';
+                        existing.replaceWith(favicon);
+                    }
+                }
+            }
         }
 
         function getFavicon(url) {
@@ -1068,10 +1131,10 @@
             tab.url = url;
             document.getElementById('url-input').value = url;
 
-            try {
-                // Show loading
-                document.getElementById('page-content').innerHTML = '<div class="loading">Loading...</div>';
+            // Show spinner in tab favicon
+            setTabLoading(currentTabIndex, true);
 
+            try {
                 // Fetch llms.txt
                 await fetchLlmsTxt(url, false);
 
@@ -1101,6 +1164,13 @@
                     tab.title = parsed.title || new URL(url).hostname;
                     tab.description = parsed.description || '';
 
+                    // Invalidate cached div for this tab
+                    if (tabDivCache.has(currentTabIndex)) {
+                        const old = tabDivCache.get(currentTabIndex);
+                        if (old.parentNode) old.parentNode.removeChild(old);
+                        tabDivCache.delete(currentTabIndex);
+                    }
+
                     storage.save(state);
                     renderCurrentTab();
                     renderTabs();
@@ -1120,6 +1190,8 @@
             <p>${error.message}</p>
           </div>
         `;
+            } finally {
+                setTabLoading(currentTabIndex, false);
             }
         }
 
@@ -1235,20 +1307,67 @@
             }
         }
 
+        // Web Worker for markdown parsing
+        const markedWorker = (() => {
+            const workerCode = `
+                importScripts('https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js');
+                self.onmessage = function(e) {
+                    const { id, content } = e.data;
+                    const html = marked.parse(content);
+                    self.postMessage({ id, html });
+                };
+            `;
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
+            const worker = new Worker(URL.createObjectURL(blob));
+            let nextId = 0;
+            const pending = new Map();
+            worker.onmessage = (e) => {
+                const { id, html } = e.data;
+                const resolve = pending.get(id);
+                if (resolve) {
+                    pending.delete(id);
+                    resolve(html);
+                }
+            };
+            return {
+                parse(content) {
+                    return new Promise(resolve => {
+                        const id = nextId++;
+                        pending.set(id, resolve);
+                        worker.postMessage({ id, content });
+                    });
+                }
+            };
+        })();
+
+        // Cache rendered tab divs by tab index
+        const tabDivCache = new Map();
+
         // Rendering
         function renderCurrentTab() {
             const tab = state.tabs[currentTabIndex];
             document.getElementById('url-input').value = tab.url || '';
 
-            // Update llms.txt source selector
-            document.getElementById('llmstxt-source').value = tab.llmstxtSource || 'auto';
-
             // Update navigation buttons
             document.getElementById('back-btn').disabled = tab.prev.length === 0;
             document.getElementById('forward-btn').disabled = tab.next.length === 0;
 
-            // Render content
-            if (tab.content) {
+            const container = document.getElementById('page-content');
+
+            // Hide all cached tab divs
+            for (const [idx, div] of tabDivCache) {
+                div.style.display = 'none';
+            }
+
+            // Check if we have a cached div for this tab
+            if (tabDivCache.has(currentTabIndex)) {
+                const cached = tabDivCache.get(currentTabIndex);
+                cached.style.display = '';
+                // Make sure it's in the container
+                if (!cached.parentNode) {
+                    container.appendChild(cached);
+                }
+            } else if (tab.content) {
                 renderContent(tab.content, tab.url);
             }
 
@@ -1256,43 +1375,22 @@
             renderSidebar(tab.url);
         }
 
-        function renderContent(content, baseUrl) {
-            const parsed = parseMarkdown(content);
-            let html = '';
-
-            // Render frontmatter
-            if (parsed.frontmatter) {
-                html += '<div class="frontmatter"><table>';
-                for (const [key, value] of Object.entries(parsed.frontmatter)) {
-                    html += `<tr><th>${escapeHtml(key)}</th><td>${escapeHtml(value)}</td></tr>`;
-                }
-                html += '</table></div>';
-            }
-
-            // Remove frontmatter from content
-            if (content.startsWith('---')) {
-                const endIndex = content.indexOf('---', 3);
-                if (endIndex !== -1) {
-                    content = content.substring(endIndex + 3);
-                }
-            }
-
-            // Render markdown (markedFormLinks handles {var} link→form conversion)
-            const ext = markedFormLinks();
-            const origRenderer = ext.extensions[0].renderer;
-            ext.extensions[0].renderer = function(token) {
-                // Inject data-href with original template URL so we can do {var} replacement on submit
-                return origRenderer(token).replace('<form ', '<form data-href="' + token.href.replace(/&/g,'&amp;').replace(/"/g,'&quot;') + '" ');
-            };
-            marked.use(ext);
-            html += marked.parse(content);
-
-            const container = document.getElementById('page-content');
-            container.innerHTML = `<div class="markdown-content">${html}</div>`;
-
+        function setupContentHandlers(container, baseUrl) {
             // Setup link handlers
             container.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', (e) => {
+                    // Cmd+click or Ctrl+click opens in new tab
+                    if (e.metaKey || e.ctrlKey) {
+                        e.preventDefault();
+                        let href = link.getAttribute('href');
+                        if (href && !href.startsWith('http') && baseUrl) {
+                            href = resolveUrl(href, baseUrl);
+                        }
+                        createNewTab(href);
+                        switchTab(state.tabs.length - 1);
+                        loadUrl(href);
+                        return;
+                    }
                     e.preventDefault();
                     let href = link.getAttribute('href');
                     if (href && !href.startsWith('http') && baseUrl) {
@@ -1318,9 +1416,7 @@
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
                     let url = form.dataset.href;
-                    // Replace each {var} placeholder with the input value
                     url = url.replace(/\{([^}]+)\}/g, (match, expr) => {
-                        // Extract just the name (strip *, :type, =default)
                         let name = expr.split('=')[0].split(':')[0].replace('*', '');
                         const input = form.elements[name];
                         return input ? encodeURIComponent(input.value) : match;
@@ -1332,51 +1428,92 @@
                 });
             });
 
-            // Fix relative URLs in images
+            // Fix relative URLs in media
             container.querySelectorAll('img').forEach(img => {
                 const src = img.getAttribute('src');
-                if (src && baseUrl) {
-                    img.src = resolveUrl(src, baseUrl);
-                }
+                if (src && baseUrl) img.src = resolveUrl(src, baseUrl);
             });
-
-            // Fix relative URLs in videos
             container.querySelectorAll('video').forEach(video => {
                 const src = video.getAttribute('src');
-                if (src && baseUrl) {
-                    video.src = resolveUrl(src, baseUrl);
-                }
-
+                if (src && baseUrl) video.src = resolveUrl(src, baseUrl);
                 video.querySelectorAll('source').forEach(source => {
-                    const sourceSrc = source.getAttribute('src');
-                    if (sourceSrc && baseUrl) {
-                        source.src = resolveUrl(sourceSrc, baseUrl);
-                    }
+                    const s = source.getAttribute('src');
+                    if (s && baseUrl) source.src = resolveUrl(s, baseUrl);
                 });
             });
-
-            // Fix relative URLs in iframes
             container.querySelectorAll('iframe').forEach(iframe => {
                 const src = iframe.getAttribute('src');
-                if (src && baseUrl) {
-                    iframe.src = resolveUrl(src, baseUrl);
-                }
+                if (src && baseUrl) iframe.src = resolveUrl(src, baseUrl);
             });
-
-            // Fix relative URLs in audio
             container.querySelectorAll('audio').forEach(audio => {
                 const src = audio.getAttribute('src');
-                if (src && baseUrl) {
-                    audio.src = resolveUrl(src, baseUrl);
-                }
-
+                if (src && baseUrl) audio.src = resolveUrl(src, baseUrl);
                 audio.querySelectorAll('source').forEach(source => {
-                    const sourceSrc = source.getAttribute('src');
-                    if (sourceSrc && baseUrl) {
-                        source.src = resolveUrl(sourceSrc, baseUrl);
-                    }
+                    const s = source.getAttribute('src');
+                    if (s && baseUrl) source.src = resolveUrl(s, baseUrl);
                 });
             });
+        }
+
+        async function renderContent(content, baseUrl) {
+            const parsed = parseMarkdown(content);
+            let frontmatterHtml = '';
+
+            // Render frontmatter
+            if (parsed.frontmatter) {
+                frontmatterHtml += '<div class="frontmatter"><table>';
+                for (const [key, value] of Object.entries(parsed.frontmatter)) {
+                    frontmatterHtml += `<tr><th>${escapeHtml(key)}</th><td>${escapeHtml(value)}</td></tr>`;
+                }
+                frontmatterHtml += '</table></div>';
+            }
+
+            // Remove frontmatter from content for markdown parsing
+            let mdContent = content;
+            if (mdContent.startsWith('---')) {
+                const endIndex = mdContent.indexOf('---', 3);
+                if (endIndex !== -1) {
+                    mdContent = mdContent.substring(endIndex + 3);
+                }
+            }
+
+            // Use web worker for markdown parsing
+            const markdownHtml = await markedWorker.parse(mdContent);
+
+            // Now handle markedFormLinks on the main thread for form conversion
+            const ext = markedFormLinks();
+            const origRenderer = ext.extensions[0].renderer;
+            ext.extensions[0].renderer = function(token) {
+                return origRenderer(token).replace('<form ', '<form data-href="' + token.href.replace(/&/g,'&amp;').replace(/"/g,'&quot;') + '" ');
+            };
+            marked.use(ext);
+            const finalHtml = marked.parse(mdContent);
+
+            const container = document.getElementById('page-content');
+
+            // Remove old cached div for this tab
+            if (tabDivCache.has(currentTabIndex)) {
+                const old = tabDivCache.get(currentTabIndex);
+                if (old.parentNode) old.parentNode.removeChild(old);
+                tabDivCache.delete(currentTabIndex);
+            }
+
+            // Hide all other cached divs
+            for (const [idx, div] of tabDivCache) {
+                div.style.display = 'none';
+            }
+
+            // Create new div for this tab
+            const div = document.createElement('div');
+            div.className = 'markdown-content';
+            div.innerHTML = frontmatterHtml + finalHtml;
+
+            // Clear container and add the div
+            container.innerHTML = '';
+            container.appendChild(div);
+            tabDivCache.set(currentTabIndex, div);
+
+            setupContentHandlers(container, baseUrl);
         }
 
 
@@ -1392,7 +1529,7 @@
                 const urlObj = new URL(url);
                 const hostname = urlObj.hostname;
                 const tab = state.tabs[currentTabIndex];
-                const source = tab.llmstxtSource || 'auto';
+                const source = tab.llmstxtSource || state.config.llmstxtDefault || 'auto';
                 const llmstxt = state.llmstxt[hostname]?.[source];
 
                 if (!llmstxt) {
@@ -1401,11 +1538,6 @@
                 }
 
                 let html = '';
-
-                // Show source info
-                if (llmstxt.source) {
-                    html += `<div class="sidebar-info">Source: ${llmstxt.source === 'crawl' ? 'Crawl Service' : 'Website'}</div>`;
-                }
 
                 llmstxt.sections.forEach((section, sectionIndex) => {
                     html += `
@@ -1416,9 +1548,17 @@
               <div class="section-files" id="section-${sectionIndex}">
           `;
 
-                    // Group files by path
-                    const fileTree = buildFileTree(section.files);
-                    html += renderFileTree(fileTree, urlObj.origin);
+                    section.files.forEach(file => {
+                        const fullUrl = file.url.startsWith('http') ? file.url : urlObj.origin + (file.url.startsWith("/") ? file.url : "/" + file.url);
+                        html += `
+              <a href="${escapeHtml(fullUrl)}"
+                 class="file-item"
+                 title="${escapeHtml(file.notes || file.name)}"
+                 onclick="event.preventDefault(); loadUrl('${escapeHtml(fullUrl)}')">
+                ${escapeHtml(file.name)}
+              </a>
+            `;
+                    });
 
                     html += `</div></div>`;
                 });
@@ -1428,68 +1568,6 @@
             } catch (error) {
                 sidebarContent.innerHTML = '<div class="sidebar-error">Error rendering navigation</div>';
             }
-        }
-
-        function buildFileTree(files) {
-            const tree = {};
-            files.forEach(file => {
-                try {
-                    const url = new URL(file.url);
-                    const pathParts = url.pathname.split('/').filter(p => p);
-
-                    let current = tree;
-                    pathParts.forEach((part, index) => {
-                        if (index === pathParts.length - 1) {
-                            if (!current._files) current._files = [];
-                            current._files.push({ ...file, filename: part });
-                        } else {
-                            if (!current[part]) current[part] = {};
-                            current = current[part];
-                        }
-                    });
-                } catch {
-                    if (!tree._files) tree._files = [];
-                    tree._files.push(file);
-                }
-            });
-            return tree;
-        }
-
-        function renderFileTree(tree, origin, depth = 0) {
-            let html = '';
-
-            // Render directories
-            for (const [key, value] of Object.entries(tree)) {
-                if (key === '_files') continue;
-                html += `
-          <div class="file-nested" style="margin-left: ${depth * 4}px">
-            <div class="section-header" onclick="toggleFileSection(this)">
-              ${escapeHtml(key)}
-            </div>
-            <div class="section-files">
-              ${renderFileTree(value, origin, depth + 1)}
-            </div>
-          </div>
-        `;
-            }
-
-            // Render files
-            if (tree._files) {
-                tree._files.forEach(file => {
-                    const fullUrl = file.url.startsWith('http') ? file.url : origin + (file.url.startsWith("/") ? file.url : "/" + file.url);
-                    html += `
-            <a href="${escapeHtml(fullUrl)}" 
-               class="file-item" 
-               title="${escapeHtml(file.notes || file.name)}"
-               style="margin-left: ${depth * 4}px"
-               onclick="event.preventDefault(); loadUrl('${escapeHtml(fullUrl)}')">
-              ${escapeHtml(file.filename || file.name)}
-            </a>
-          `;
-                });
-            }
-
-            return html;
         }
 
         window.toggleSection = function (index) {
@@ -1611,16 +1689,6 @@
             });
         });
 
-        // llms.txt source selector
-        document.getElementById('llmstxt-source').addEventListener('change', (e) => {
-            const tab = state.tabs[currentTabIndex];
-            tab.llmstxtSource = e.target.value;
-            storage.save(state);
-            if (tab.url) {
-                fetchLlmsTxt(tab.url, true).then(() => renderSidebar(tab.url));
-            }
-        });
-
         // Refresh llms.txt button
         document.getElementById('refresh-llmstxt').addEventListener('click', async () => {
             const tab = state.tabs[currentTabIndex];
@@ -1632,7 +1700,7 @@
             try {
                 const urlObj = new URL(tab.url);
                 const hostname = urlObj.hostname;
-                const source = tab.llmstxtSource || 'auto';
+                const source = tab.llmstxtSource || state.config.llmstxtDefault || 'auto';
 
                 // Clear cached llms.txt for this source
                 if (state.llmstxt[hostname]) {

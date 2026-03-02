@@ -1,40 +1,42 @@
-# Introducing Markdown Browser - A Developer Tool for making your website more agent-friendly
+# Introducing Markdown Browser - See the Web the Way AI Sees It
 
-In the last few years we've seen dozens of startups building Agents that can automate browsing the web that was made for humans. But the internet is going to be used by agents 1000x more than humans soon. So shouldn't web publishers start being more concerned about how their content looks to agents? Shouldn't there be a tool to see how your content looks for AI agents?
+The web is bifurcating. For 30 years we've had one web — built for human eyes, full of colors, layouts, and animations. But now a second web is emerging: the machine-readable layer of markdown, structured data, and [llms.txt](https://llmstxt.org) files that AI agents actually consume. There's no browser for that second web. Until now.
 
-https://markdownbrowser.com does just that. It's a browser that leverages the [llms.txt standard](https://llmstxt.org) to navigate each website. If there is no such file available by the author of the website, markdownbrowser relies on several strategies to create one and make any website available in simple markdown format.
-
-This allows navigating markdown-version of any website, which allows developers to see the internet through the eyes of the agent.
+https://markdownbrowser.com is a browser for the machine-readable web. It leverages the llms.txt standard to navigate each website. If there is no such file available by the author of the website, markdownbrowser relies on several strategies to create one and make any website available in simple markdown format.
 
 ![](demo.gif)
 
-## Why Should You Care?
+## Why Does This Need to Exist?
 
-Whether you're a web publisher, a developer building agents, or just someone curious about where the internet is heading, Markdown Browser reveals something important: **the web is about to have a lot more non-human visitors**.
+### 1. LLMs Can't Browse the Web Well
 
-### If You Publish Content Online
+When an AI agent fetches a webpage today, it gets a wall of HTML full of nav bars, ads, cookie banners, tracking scripts, and boilerplate. The actual content is buried. Most of the tokens an agent spends on a webpage are wasted on layout noise, not information.
 
-Your website is about to get a lot more traffic from AI agents than from humans. Think about it - when someone asks ChatGPT to "find me the best project management tool for a small team," that agent is browsing dozens of websites on your behalf. If your site is agent-friendly, you're in the consideration set. If it's a mess of JavaScript spaghetti that agents can't parse, you're invisible.
+Markdown strips all that away. It's the semantic essence of a page — just the text, structure, links, and meaning. Markdown Browser lets you see exactly what's left when you strip a website down to what actually matters to an agent. Some sites hold up beautifully. Others are chaos that was being held together by CSS. Either way, it's illuminating — and if you publish content online, it's something you need to see.
 
-This is SEO for the agent era. Just like businesses learned to optimize for Google's crawlers in the 2000s, you'll need to optimize for AI agents in the 2020s. Markdown Browser lets you see exactly what those agents see - and whether your content actually makes sense to them.
+### 2. llms.txt Is an Emerging Standard — But There's No Way to Browse It
 
-### If You're Building AI Agents
+Sites are starting to publish `/llms.txt` files — structured sitemaps designed specifically for AI consumption. It's a simple format that creates an overview of what's available on a website, and it's gaining traction among developers who want their documentation to be agent-accessible.
 
-You've probably wrestled with web scraping. It's fragile, expensive, and breaks whenever a site redesigns. Markdown versions of the web are cheaper to process (fewer tokens wasted on HTML cruft), more reliable, and easier to reason about.
+But until now, there's been no good way to *browse* that ecosystem as a human. Markdown Browser makes llms.txt navigable — you get a sidebar with sections and links, like a developer portal for the machine-readable web. You can explore a site's entire agent-facing structure top-down, see what's exposed, and spot what's missing.
 
-The more publishers adopt llms.txt and agent-friendly formats, the better your agents will perform. Markdown Browser helps accelerate that adoption by making the problem visible.
+### 3. Developers Building AI Tools Need to Debug What Their Agents See
 
-### If You're Just Curious
+If you're building an agent that fetches web content, you've probably wrestled with scraping. It's fragile, expensive, and breaks whenever a site redesigns. Worse, you often can't tell *why* your agent is confused by a page without manually inspecting the markdown it received.
 
-There's something fascinating about seeing the internet through different eyes. We've spent 30 years building a web optimized for human vision - colors, layouts, animations. But that's not how agents experience it. They see text, structure, and relationships.
+Markdown Browser surfaces the metadata that matters: Was an extract API used? How many tokens did the page cost? How fast was the response? Is the content actually spec-compliant and functional, or is it garbled in a way that would trip up an agent? This is the devtools panel for the agent-browsable web.
 
-Browsing in markdown strips away the visual noise and reveals the actual information architecture of websites. It's like looking at the skeleton of the web. Some sites have beautiful, logical structures. Others are chaos held together by CSS. Either way, it's illuminating.
+### 4. Markdown Is Genuinely a Better Reading Experience
+
+This one surprised us too. Once you start browsing in markdown, it's hard to go back for content-heavy pages. No popups. No layout shift. No cookie consent dialogs. No autoplaying videos. No "subscribe to our newsletter" modals. Just text, links, images, and code blocks — cleanly rendered.
+
+It's like reader mode on steroids. And unlike browser reader modes that try to heuristically extract content from HTML (and often fail), the markdown web is *designed* to be read this way. If a site publishes good markdown, the reading experience is genuinely superior.
 
 ### The Bigger Picture
 
 We're at an inflection point. The web was built for humans, but humans are increasingly accessing it through AI intermediaries. Someone has to build the tools that make this transition smooth. Someone has to define how agents should see content, navigate sites, and understand context.
 
-Markdown Browser is a small step toward that future - a developer tool that helps us all understand what the agent-friendly web should look like, and whether our corner of the internet is ready for it.
+Markdown Browser is a step toward that future — a developer tool that helps us all understand what the agent-friendly web should look like, and whether our corner of the internet is ready for it.
 
 ## Goal: Developer Tool for the transition to the Agent-Friendly Web
 

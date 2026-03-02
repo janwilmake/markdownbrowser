@@ -4,14 +4,18 @@
 - ✅ Allow choosing the llms.txt source: `auto`, `crawl`, or `website`
 - ✅ When `auto`, use `crawl.llmtext.com/{domain}/llms.txt` as fallback to `llms.txt` not being found in markdownbrowser
 - ✅ Allow refreshing `llms.txt` at any time
-- Make styling more like chrome
-- Make navigation more simple, e.g. for https://simonwillison.net
-- search with navigation is ugly
-- Make refresh llms.txt not space so much
-- Remove select button
+
+# ✅ Make it more pretty
+
+- simplify the navigation to just be one level deep for the ## in llms.txt, do not nest it with the urls
+- Make styling more like safari. among other things, less rounded, and the tabs should span the full width available
+- When clicking the refresh button of llms.txt it space out weirdly. make it a simple spin animation without resize
+- Remove select button from menu to select auto/web/crawl (this should come from the settings and that should be enough)
+- Make it render markdown to html faster and in a web-worker; some more optimizations may be possible to make it fast. When switching tabs, the html should be
+  saved so it renders fast. maybe the div can just be hidden instead of removed when swithcin tabs. as long as it's fast
+- Cmd+click a url should open it in a new tab
+
 - Add link to validate the llms.txt: https://llmtext.com/?validate={url}
-- Make it render markdown to html faster and in a web-worker; some more optimizations may be possible to make it fast
-- (cmd + click) -> new tab
 
 # PITCH IT
 
