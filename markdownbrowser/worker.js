@@ -2,7 +2,7 @@
  * Cloudflare Worker for markdown browser
  * Handles proxying fetch requests with proper headers
  */
-
+import indexHtml from "./index.html";
 const MARKDOWN_HOMEPAGE = `# Markdown Browser
 
 > A browser for the machine-readable web.
@@ -50,18 +50,25 @@ export default {
         });
       }
       // Serve the HTML app
-      return env.ASSETS.fetch(
-        new Request(new URL("/main.html", request.url), request)
-      );
+      return new Response(indexHtml, {
+        headers: { "content-type": "text/html;charset=utf8" }
+      });
     }
 
     // Handle /fetch endpoint
     if (url.pathname === "/fetch" && request.method === "POST") {
       try {
         const body = await request.json();
-        const { url: targetUrl, extract, search, apiKey, searchApiKey, extractApiKey } = body;
-        const effectiveSearchApiKey = searchApiKey || apiKey || '';
-        const effectiveExtractApiKey = extractApiKey || apiKey || '';
+        const {
+          url: targetUrl,
+          extract,
+          search,
+          apiKey,
+          searchApiKey,
+          extractApiKey
+        } = body;
+        const effectiveSearchApiKey = searchApiKey || apiKey || "";
+        const effectiveExtractApiKey = extractApiKey || apiKey || "";
         console.log({ targetUrl });
         if (!targetUrl) {
           return jsonResponse({ error: "Missing url parameter" }, 400);
@@ -132,7 +139,10 @@ export default {
             );
             const extractHeaders = new Headers();
             if (effectiveExtractApiKey) {
-              extractHeaders.set("Authorization", `Bearer ${effectiveExtractApiKey}`);
+              extractHeaders.set(
+                "Authorization",
+                `Bearer ${effectiveExtractApiKey}`
+              );
             }
 
             const extractResponse = await fetch(extractUrl, {
