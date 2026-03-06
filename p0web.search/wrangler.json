@@ -4,13 +4,9 @@
   "main": "worker.ts",
   "env": {
     "prod": {
-      "routes": [
-        { "custom_domain": true, "pattern": "search.p0web.com" },
-        { "custom_domain": true, "pattern": "search.markdownbrowser.com" }
-      ]
+      "routes": [{ "custom_domain": true, "pattern": "search.p0web.com" }]
     }
   },
-
   "compatibility_date": "2025-10-14",
   "observability": { "logs": { "enabled": true } }
 }

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+  "name": "markdownbrowser-extract",
+  "main": "worker.ts",
+  "env": {
+    "prod": {
+      "routes": [{ "custom_domain": true, "pattern": "extract.p0web.com" }]
+    }
+  },
+  "compatibility_date": "2025-10-14",
+  "observability": { "logs": { "enabled": true } }
+}

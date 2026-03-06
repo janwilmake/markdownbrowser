@@ -701,6 +701,96 @@
             font-size: 12px;
         }
 
+        .engine-cards {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .engine-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            flex: 1;
+            min-width: calc(50% - 4px);
+        }
+
+        .engine-card:hover {
+            border-color: var(--accent-color);
+            background: var(--bg-tertiary);
+        }
+
+        .engine-card.selected {
+            border-color: var(--accent-color);
+            background: color-mix(in srgb, var(--accent-color) 10%, var(--bg-secondary));
+        }
+
+        .engine-card img {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        .engine-card-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .engine-card-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .engine-card-host {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .engine-card-badge {
+            font-size: 9px;
+            background: var(--accent-color);
+            color: white;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .engine-custom {
+            margin-top: 8px;
+        }
+
+        .engine-auth {
+            margin-top: 8px;
+        }
+
+        .engine-auth label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .engine-auth label a {
+            font-size: 12px;
+            font-weight: 400;
+        }
+
         .modal-buttons {
             display: flex;
             gap: 12px;
@@ -976,18 +1066,27 @@
     <div class="modal-overlay" id="config-modal">
         <div class="modal">
             <h2>Settings</h2>
+
             <div class="config-field">
-                <label for="config-search">Search URL (use %s for query)</label>
-                <input type="text" id="config-search" placeholder="https://search.p0web.com/search/%s">
+                <label>Extract Engine</label>
+                <div class="engine-cards" id="config-extract-cards"></div>
+                <input type="text" id="config-extract-custom" class="engine-custom" placeholder="https://example.com/%s" style="display:none;">
+                <div id="config-extract-auth" class="engine-auth" style="display:none;">
+                    <label for="config-extract-apikey">Extract API Key <a id="config-extract-key-link" href="#" target="_blank">(Get key)</a></label>
+                    <input type="password" id="config-extract-apikey" placeholder="Bearer token">
+                </div>
             </div>
+
             <div class="config-field">
-                <label for="config-extract">Extract URL (use %s for target URL)</label>
-                <input type="text" id="config-extract" placeholder="https://llmtext.com/%s">
+                <label>Search Engine</label>
+                <div class="engine-cards" id="config-search-cards"></div>
+                <input type="text" id="config-search-custom" class="engine-custom" placeholder="https://example.com/search/%s" style="display:none;">
+                <div id="config-search-auth" class="engine-auth" style="display:none;">
+                    <label for="config-search-apikey">Search API Key <a id="config-search-key-link" href="#" target="_blank">(Get key)</a></label>
+                    <input type="password" id="config-search-apikey" placeholder="Bearer token">
+                </div>
             </div>
-            <div class="config-field">
-                <label for="config-apikey">API Key (for search and extract)</label>
-                <input type="password" id="config-apikey" placeholder="Enter API key">
-            </div>
+
             <div class="config-field">
                 <label for="config-llmstxt-default">Default llms.txt source</label>
                 <select id="config-llmstxt-default">
@@ -1102,9 +1201,10 @@
                     llmstxt: {},
                     tabs: [],
                     config: {
-                        search: 'https://search.p0web.com/search/%s',
-                        extract: 'https://llmtext.com/%s',
-                        apiKey: '',
+                        search: 'https://googllm.com/search/%s',
+                        extract: 'https://defuddle.md/%s',
+                        searchApiKey: '',
+                        extractApiKey: '',
                         llmstxtDefault: 'auto'
                     }
                 };
@@ -1116,6 +1216,71 @@
 
         let state = storage.get();
         let currentTabIndex = 0;
+
+        const extractEngines = [
+            { url: 'https://defuddle.md/%s', name: 'Defuddle', host: 'defuddle.md', icon: '/defuddle.jpg', auth: false },
+            { url: 'https://reader.markdownbrowser.com/md/%s', name: 'Mozilla Readability', host: 'reader.markdownbrowser.com', icon: '/mozilla.webp', auth: false },
+            { url: 'https://extract.p0web.com/%s', name: 'Parallel Extract', host: 'extract.p0web.com', icon: '/parallel.jpeg', auth: true, keyUrl: 'https://platform.parallel.ai/settings?tab=api-keys' },
+            { url: 'https://r.jina.ai/%s', name: 'Jina Reader', host: 'r.jina.ai', icon: '/jina.png', auth: true, keyUrl: 'https://jina.ai/reader' },
+        ];
+        const searchEngines = [
+            { url: 'https://googllm.com/search/%s', name: 'GoogLLM', host: 'googllm.com', icon: '/google.png', auth: true, keyUrl: 'https://googllm.com/dashboard' },
+            { url: 'https://search.p0web.com/%s', name: 'Parallel Search', host: 'search.p0web.com', icon: '/parallel.jpeg', auth: true, keyUrl: 'https://platform.parallel.ai/settings?tab=api-keys' },
+        ];
+
+        function buildEngineCards(containerId, engines, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            engines.forEach(engine => {
+                const card = document.createElement('div');
+                card.className = 'engine-card';
+                card.dataset.url = engine.url;
+                card.innerHTML = `<img src="${engine.icon}" alt="${engine.name}">` +
+                    `<div class="engine-card-info"><span class="engine-card-name">${engine.name}</span>` +
+                    `<span class="engine-card-host">${engine.host}</span></div>` +
+                    (engine.auth ? '<span class="engine-card-badge">KEY</span>' : '');
+                card.addEventListener('click', () => selectEngineCard(type, engine.url));
+                container.appendChild(card);
+            });
+            // Custom card
+            const custom = document.createElement('div');
+            custom.className = 'engine-card';
+            custom.dataset.url = 'custom';
+            custom.innerHTML = '<div class="engine-card-info"><span class="engine-card-name">Custom</span>' +
+                '<span class="engine-card-host">Enter a URL...</span></div>';
+            custom.addEventListener('click', () => selectEngineCard(type, 'custom'));
+            container.appendChild(custom);
+        }
+
+        function selectEngineCard(type, url) {
+            const container = document.getElementById(`config-${type}-cards`);
+            container.querySelectorAll('.engine-card').forEach(c => {
+                c.classList.toggle('selected', c.dataset.url === url);
+            });
+            const customInput = document.getElementById(`config-${type}-custom`);
+            const authDiv = document.getElementById(`config-${type}-auth`);
+            const keyLink = document.getElementById(`config-${type}-key-link`);
+            const engines = type === 'extract' ? extractEngines : searchEngines;
+            const engine = engines.find(e => e.url === url);
+            customInput.style.display = url === 'custom' ? 'block' : 'none';
+            if (engine) {
+                authDiv.style.display = engine.auth ? 'block' : 'none';
+                if (engine.auth) keyLink.href = engine.keyUrl;
+            } else if (url === 'custom') {
+                authDiv.style.display = 'block';
+                keyLink.href = '#';
+            } else {
+                authDiv.style.display = 'none';
+            }
+        }
+
+        function getSelectedEngine(type) {
+            const container = document.getElementById(`config-${type}-cards`);
+            const selected = container.querySelector('.engine-card.selected');
+            if (!selected) return '';
+            const url = selected.dataset.url;
+            return url === 'custom' ? document.getElementById(`config-${type}-custom`).value : url;
+        }
 
         const hardcodedHostnames = ["llmtext.com", "cursor.com/docs","bun.com/docs", "docs.x.com","googllm.com", "parallel.ai", "boristane.com",  "simonwilison.net", "docs.perplexity.ai",  "blog.cloudflare.com", "developers.cloudflare.com" ];
         //"ast-grep.github.io", "community-charts.github.io", "docs.sourceforge.net", "docs.kick.com", "docs.cdp.coinbase.com", "docs.hybrid.ai", "docs.anthropic.com", "docs.zapier.com", "docs.joinmassive.com", "docs.codeium.com", "docs.replit.com", "docs.benzinga.com", "lunacy.docs.icons8.com", "docs.netlify.com", "docs.jsfiddle.net", "docs.envoyer.io", "docs.intelligems.io", "docs.warp.dev", "docs.axiom.trade", "docs-en.sinch.com", "docs.augmentcode.com", "docs.asapp.com", "docs.beyondwords.io", "docs.iproyal.com", "docs.ideogram.ai", "docs.base.org", "docs.dns0.eu", "docs.dataimpulse.com", "docs.contentsquare.com", "docs.cobrowse.io", "docs.carto.com", "docs.ipaper.io", "docs.imgarena.com", "docs.whereby.com", "docs.commoninja.com", "docs.brightdata.com", "docs.zigpoll.com", "docs.coollabs.io", "docs.legendsoflearning.com", "dev.writer.com", "docs.blockscout.com", "docs.zealy.io", "docs.comfy.org", "docs.couchdrop.io", "docs.jumptask.io", "docs.whisk.com", "docs.kyberswap.com", "docs.venice.ai", "docs.zep.us", "docs.wingbits.com", "docs.bugsplat.com", "docs.flip.to", "docs.craft.co", "docs.pinecone.io", "docs.lottielab.com", "docs.brandfetch.com", "modelcontextprotocol.io", "docs.i3d.net", "docs.kaito.ai", "docs.zoko.io", "docs.vechain.org", "docs.abs.xyz", "docs.useparagon.com", "docs.imagine.art", "docs.coframe.com", "docs.ventrata.com", "docs.layouthub.com", "docs.zipy.ai", "docs.chatling.ai", "docs.bixgrow.com", "docs.vdo.ninja", "docs.projectdiscovery.io", "docs.tryvital.io", "docs.cryptlex.com", "docs.imprint.co"
@@ -1328,7 +1493,8 @@
                             url: url,
                             extract: state.config?.extract,
                             search: state.config?.search,
-                            apiKey: state.config?.apiKey
+                            searchApiKey: state.config?.searchApiKey || state.config?.apiKey || '',
+                            extractApiKey: state.config?.extractApiKey || state.config?.apiKey || ''
                         })
                     });
 
@@ -1895,9 +2061,23 @@
         });
 
         document.getElementById('config-btn').addEventListener('click', () => {
-            document.getElementById('config-search').value = state.config?.search;
-            document.getElementById('config-extract').value = state.config?.extract;
-            document.getElementById('config-apikey').value = state.config?.apiKey;
+            const extract = state.config?.extract || 'https://defuddle.md/%s';
+            const search = state.config?.search || 'https://googllm.com/search/%s';
+            buildEngineCards('config-extract-cards', extractEngines, 'extract');
+            buildEngineCards('config-search-cards', searchEngines, 'search');
+            // Select current engine or custom
+            const isCustomExtract = !extractEngines.some(e => e.url === extract);
+            const isCustomSearch = !searchEngines.some(e => e.url === search);
+            if (isCustomExtract) {
+                document.getElementById('config-extract-custom').value = extract;
+            }
+            if (isCustomSearch) {
+                document.getElementById('config-search-custom').value = search;
+            }
+            selectEngineCard('extract', isCustomExtract ? 'custom' : extract);
+            selectEngineCard('search', isCustomSearch ? 'custom' : search);
+            document.getElementById('config-extract-apikey').value = state.config?.extractApiKey || state.config?.apiKey || '';
+            document.getElementById('config-search-apikey').value = state.config?.searchApiKey || state.config?.apiKey || '';
             document.getElementById('config-llmstxt-default').value = state.config?.llmstxtDefault || 'auto';
             document.getElementById('config-modal').classList.add('visible');
         });
@@ -1908,10 +2088,12 @@
 
         document.getElementById('config-save').addEventListener('click', () => {
             try {
-                state.config.search = document.getElementById('config-search').value;
-                state.config.extract = document.getElementById('config-extract').value;
-                state.config.apiKey = document.getElementById('config-apikey').value;
+                state.config.extract = getSelectedEngine('extract');
+                state.config.search = getSelectedEngine('search');
+                state.config.extractApiKey = document.getElementById('config-extract-apikey').value;
+                state.config.searchApiKey = document.getElementById('config-search-apikey').value;
                 state.config.llmstxtDefault = document.getElementById('config-llmstxt-default').value;
+                delete state.config.apiKey; // migrate away from old single key
                 storage.save(state);
                 document.getElementById('config-modal').classList.remove('visible');
                 updateHostnameList();

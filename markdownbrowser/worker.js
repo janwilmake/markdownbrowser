@@ -59,7 +59,9 @@ export default {
     if (url.pathname === "/fetch" && request.method === "POST") {
       try {
         const body = await request.json();
-        const { url: targetUrl, extract, search, apiKey } = body;
+        const { url: targetUrl, extract, search, apiKey, searchApiKey, extractApiKey } = body;
+        const effectiveSearchApiKey = searchApiKey || apiKey || '';
+        const effectiveExtractApiKey = extractApiKey || apiKey || '';
         console.log({ targetUrl });
         if (!targetUrl) {
           return jsonResponse({ error: "Missing url parameter" }, 400);
@@ -90,11 +92,10 @@ export default {
         }
 
         // Determine if we should use the extract service
-        const isExtractAvailable = extract && apiKey;
-        const isSearchUrl =
-          search && apiKey
-            ? targetUrl.startsWith(search.replace("%s", ""))
-            : false;
+        const isExtractAvailable = !!extract;
+        const isSearchUrl = search
+          ? targetUrl.startsWith(search.replace("%s", ""))
+          : false;
 
         let fetchUrl = targetUrl;
         let extracted = false;
@@ -103,7 +104,9 @@ export default {
         // Use extract service for HTML content if apiKey is available
         if (isSearchUrl) {
           // For search URLs
-          headers.set("Authorization", `Bearer ${apiKey}`);
+          if (effectiveSearchApiKey) {
+            headers.set("Authorization", `Bearer ${effectiveSearchApiKey}`);
+          }
         } else {
           // For direct markdown/text fetches, set Accept header
           headers.set("Accept", "text/markdown, text/plain, */*");
@@ -128,7 +131,9 @@ export default {
               encodeURIComponent(targetUrl)
             );
             const extractHeaders = new Headers();
-            extractHeaders.set("Authorization", `Bearer ${apiKey}`);
+            if (effectiveExtractApiKey) {
+              extractHeaders.set("Authorization", `Bearer ${effectiveExtractApiKey}`);
+            }
 
             const extractResponse = await fetch(extractUrl, {
               headers: extractHeaders
@@ -144,7 +149,7 @@ export default {
             }
           } else {
             throw new Error(
-              "Got HTML. Can only do this with extract engine set up. Please provide an API key in settings. You can get a Parallel API key (the default extract engine) at https://platform.parallel.ai/settings?tab=api-keys"
+              "Got HTML. Can only do this with an extract engine set up. Please configure one in Settings."
             );
           }
         }
